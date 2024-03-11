@@ -11,8 +11,8 @@
 [STATUS] GraSPI exits!
 
  time check:
-Reading done: +0.0062561s
-CC determined: +0.000890017s
-ALL performance indicators computed: +0.00170493s
+Reading done: +0.000373125s
+CC determined: +0.000876904s
+ALL performance indicators computed: +0.00332212s
 ----------------
-total: 0.00886416s
+total: 0.00457597s

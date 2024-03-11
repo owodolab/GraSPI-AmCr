@@ -4,7 +4,7 @@ MAINDIR=$PWD
 
 
 # paths to GraSPI and external tools used to pre or post process data
-GRASPI5Phases=$MAINDIR/../../../../src/GRASPI5Phases
+GRASPI5Phases=$MAINDIR/../../../../src-v1/GRASPI5Phases
 
 # file to analyze
 FILENAME=data_6_6
