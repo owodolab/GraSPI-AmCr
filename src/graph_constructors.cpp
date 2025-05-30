@@ -467,6 +467,14 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     delete G0;
     
     //step 4: create the second graph, this time add the edges between effective charge transport regions only.
+
+    std::ofstream fileIdOf3a("Ids3a.txt");
+    std::ofstream fileIdOf3b("Ids3b.txt");
+    std::ofstream fileIdOf3c("Ids3c.txt");
+
+    std::ofstream fileIdOfEHT("IdsEHT.txt");
+    std::ofstream fileIdOfEET("IdsEET.txt");
+
     
     G = new graspi::graph_t( d_g.n_total() );
     n = d_g.n_bulk;
@@ -482,13 +490,16 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     
     std::pair<int,char>* ngbr = new std::pair<int,char> [ngbr_size];
     
-    std::set<int> setOfIndicesGREYinEHET3a;
-    std::set<int> setOfIndicesEEHTatInterface3b;
-    std::set<int> setOfIndicesEHHTatInterface3c;
+    std::set<std::pair<int,int> > setOfIndicesGREYinEHET3a;
+    std::set<std::pair<int,int> > setOfIndicesEEHTatInterface3b;
+    std::set<std::pair<int,int> > setOfIndicesEHHTatInterface3c;
+    
+    std::pair<int,int> pairForDesc3;
 
     for(unsigned int k = 0; k < d_a.nz; k++){
         for(unsigned int j = 0; j < d_a.ny; j++){
             for(unsigned int i = 0; i < d_a.nx; i++){
+                
                 generate_ngbr(i,j,k,d_a,ngbr,if_per_on_size);
                 
                 int id = i + d_a.nx * ( j + d_a.ny * k );
@@ -511,11 +522,11 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         o = 's';
                         w = 0.0;
                     }
-//#ifdef DEBUG
-//                    std::cerr << "( " << s << "," << t << " )"
-//                    << o << " " << w << " , "
-//                    << C[s] << " " << C[t] << std::endl;
-//#endif
+                    //#ifdef DEBUG
+                    //                    std::cerr << "( " << s << "," << t << " )"
+                    //                    << o << " " << w << " , "
+                    //                    << C[s] << " " << C[t] << std::endl;
+                    //#endif
                     
                     graspi::edge_descriptor_t e;
                     bool e_res = false;
@@ -529,155 +540,235 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         L[p] = o;
                     }
                     
+                    
                     bool connectityFlagOfSource = false;
-                    if( (C[s]==BLACK) || (C[s]==ORANGE) )
+                    if( (C[s]==BLACK) || (C[s]==ORANGE) ){
                         connectityFlagOfSource = CCsEHT[vCCsEHT[s]].if_connected_to_electrode;
-                    else if ( (C[s]==WHITE) || (C[s]==YELLOW) )
+                        if(connectityFlagOfSource) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
+                    }
+                    if ( (C[s]==WHITE) || (C[s]==YELLOW) ){
                         connectityFlagOfSource = CCsEET[vCCsEET[s]].if_connected_to_electrode;
-                    if ( (C[s]==GREY) && (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) && (CCsEET[vCCsEET[s]].if_connected_to_electrode) )
+                        if (connectityFlagOfSource ) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+                    }
+                    if ( (C[s]==GREY) && (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) && (CCsEET[vCCsEET[s]].if_connected_to_electrode) ){
                         connectityFlagOfSource = true;
+//                        fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
+//                        fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+                    }
+
+                    if (C[s]==GREY){
+                        if (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
+                        if (CCsEET[vCCsEET[s]].if_connected_to_electrode) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+                    }
+
+                    
+                    
+                    
                     
                     bool connectityFlagOfTarget = false;
                     if( (C[t]==BLACK) || (C[t]==ORANGE) )
                         connectityFlagOfTarget = CCsEHT[vCCsEHT[t]].if_connected_to_electrode;
-                    else if ( (C[t]==WHITE) || (C[t]==YELLOW) )
+                    if ( (C[t]==WHITE) || (C[t]==YELLOW) )
                         connectityFlagOfTarget = CCsEET[vCCsEET[t]].if_connected_to_electrode;
-                    if ( (C[t]==GREY) && (CCsEHT[vCCsEHT[t]].if_connected_to_electrode) && (CCsEET[vCCsEET[t]].if_connected_to_electrode) )
+                    if ( (C[t]==GREY) && (CCsEHT[vCCsEHT[t]].if_connected_to_electrode) && (CCsEET[vCCsEET[t]].if_connected_to_electrode) ){
                         connectityFlagOfTarget = true;
-
+                        //                        std::cout << t << " ";
                         
+                    }
+                    
                     if((C[s]+C[t] == 1) && (connectityFlagOfSource) && (connectityFlagOfTarget)){
-                        //add edge between white and green (only if path exists)
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        //add edge between black and green (only if path exists)
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == WHITE) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == BLACK) setOfIndicesEEHTatInterface3b.insert(s);
-                        if (C[t] == WHITE) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == BLACK) setOfIndicesEEHTatInterface3b.insert(t);
+                        
+                        if (C[s] == WHITE) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            //add edge between white and green (only if path exists)
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[s] == BLACK) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            //add edge between white and green (only if path exists)
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == WHITE) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            //add edge between black and green (only if path exists)
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == BLACK) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            //add edge between black and green (only if path exists)
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
                         
 #ifdef DEBUG
-                    std::cerr << "added1( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
+                        std::cerr << "added1( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
 #endif
-
+                        
                         
                     }//I D/A
                     
                     if( (C[s]!=C[t] )&& (C[s]+C[t] == 6)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// White and Orange
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == WHITE) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == ORANGE) setOfIndicesEEHTatInterface3b.insert(s);
-                        if (C[t] == WHITE) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == ORANGE) setOfIndicesEEHTatInterface3b.insert(t);
+                        
+                       
+                        if (C[s] == WHITE) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[s] == ORANGE) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                               w, o, G, W, L);
+                        }
+                        if (C[t] == WHITE) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+
+                        }
+                        if (C[t] == ORANGE) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+
+                        }
 #ifdef DEBUG
                     std::cerr << "added2( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
 #endif
                     }//I
-                    if((C[s]!=C[t] )&&(C[s]+C[t] == 4)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// White and Grey
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == WHITE) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == GREY)  setOfIndicesGREYinEHET3a.insert(s);
-                        if (C[t] == WHITE) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == GREY)  setOfIndicesGREYinEHET3a.insert(t);
-#ifdef DEBUG
-                    std::cerr << "added3( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
-#endif
-                    }//I
+                    
+//                    if((C[s]!=C[t] )&&(C[s]+C[t] == 4)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// White and Grey
+//                        make_update_edge_with_meta_vertex( s, green_vertex,
+//                                                          w, o, G, W, L);
+//                        make_update_edge_with_meta_vertex( t, green_vertex,
+//                                                          w, o, G, W, L);
+//                    }//I
+                    
                     if((C[s]!=C[t] )&&(C[s]+C[t] == 7)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Yellow and Black
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == YELLOW) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == BLACK) setOfIndicesEEHTatInterface3b.insert(s);
-                        if (C[t] == YELLOW) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == BLACK) setOfIndicesEEHTatInterface3b.insert(t);
+                        
+                        
+                        if (C[s] == YELLOW) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+
+                        }
+                        if (C[s] == BLACK) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == YELLOW) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == BLACK) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
 #ifdef DEBUG
                     std::cerr << "added4( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
 #endif
                     }//I
                     if((C[s]!=C[t] )&&(C[s]+C[t] == 12)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Yellow and Orange
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == YELLOW) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == ORANGE) setOfIndicesEEHTatInterface3b.insert(s);
-                        if (C[t] == YELLOW) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == ORANGE) setOfIndicesEEHTatInterface3b.insert(t);
+                        
+                        
+                        if (C[s] == YELLOW) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[s] == ORANGE) {
+                            pairForDesc3 = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( s, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == YELLOW) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
+                        if (C[t] == ORANGE) {
+                            pairForDesc3 = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            make_update_edge_with_meta_vertex( t, green_vertex,
+                                                              w, o, G, W, L);
+                        }
 #ifdef DEBUG
                     std::cerr << "added5( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
 #endif
                     }//I
-                    if((C[s]!=C[t] )&&(C[s]+C[t] == 10)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Yellow adn Grey
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        if (C[s] == YELLOW) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == GREY) setOfIndicesGREYinEHET3a.insert(s);
-                        if (C[t] == YELLOW) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == GREY) setOfIndicesGREYinEHET3a.insert(t);
-#ifdef DEBUG
-                    std::cerr << "added6( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
-#endif
-                    }//I
                     
-                    if((C[s]!=C[t] )&&(C[s]+C[t] == 3)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Black and Grey
+                    if( (C[s] == GREY)  && (connectityFlagOfSource) ){
+                        pairForDesc3 = std::make_pair(s, C[s]);
+                        setOfIndicesGREYinEHET3a.insert(pairForDesc3);
+                        w=0.0;
                         make_update_edge_with_meta_vertex( s, green_vertex,
                                                           w, o, G, W, L);
+
+#ifdef DEBUG
+                    std::cerr << "added9( " << s << " " << C[s] << std::endl;
+#endif
+                    }//bulk
+
+                    
+                    if( (C[t] == GREY)  && (connectityFlagOfTarget) ){
+                        pairForDesc3 = std::make_pair(t, C[t]);
+                        setOfIndicesGREYinEHET3a.insert(pairForDesc3); //std::cout << t << " ";
+                        w=0.0;
                         make_update_edge_with_meta_vertex( t, green_vertex,
                                                           w, o, G, W, L);
+
 #ifdef DEBUG
-                    std::cerr << "added7( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
+                    std::cerr << "added9( " << t << " " << C[t] << std::endl;
 #endif
-                        
-                    }//I
-                    if((( (C[s] == ORANGE) && (C[t]==GREY))
-                        ||
-                        ( (C[s] == GREY)   && (C[t]==ORANGE))
-                        )
-                       && (connectityFlagOfSource) && (connectityFlagOfTarget)){// Orange and Grey
-                        make_update_edge_with_meta_vertex( s, green_vertex,
-                                                          w, o, G, W, L);
-                        make_update_edge_with_meta_vertex( t, green_vertex,
-                                                          w, o, G, W, L);
-                        
-                        if (C[s] == BLACK) setOfIndicesEHHTatInterface3c.insert(s);
-                        if (C[s] == GREY)  setOfIndicesGREYinEHET3a.insert(s);
-                        if (C[t] == BLACK) setOfIndicesEHHTatInterface3c.insert(t);
-                        if (C[t] == GREY)  setOfIndicesGREYinEHET3a.insert(t);
-#ifdef DEBUG
-                    std::cerr << "added8( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
-#endif
-                    }//I
+                    }//bulk
 
-
-
-
-                }
+                }//neighbors
+                
             }//i
         }//j
     }//k
     
-#ifdef DEBUG
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesGREYinEHET3a.begin(); it != setOfIndicesGREYinEHET3a.end(); ++it) {
+        int idx = it->first / d_a.nx;
+        int idy = it->first % d_a.nx;
+        fileIdOf3a << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        }
 
-    copy(setOfIndicesGREYinEHET3a.begin(), setOfIndicesGREYinEHET3a.end(),
-         std::ostream_iterator<int>(std::cout, " "));
-    std::cout << std::endl;
-    copy(setOfIndicesEEHTatInterface3b.begin(), setOfIndicesEEHTatInterface3b.end(),
-         std::ostream_iterator<int>(std::cout, " "));
-    std::cout << std::endl;
-    copy(setOfIndicesEHHTatInterface3c.begin(), setOfIndicesEHHTatInterface3c.end(),
-         std::ostream_iterator<int>(std::cout, " "));
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEEHTatInterface3b.begin(); it != setOfIndicesEEHTatInterface3b.end(); ++it) {
+        int idx = it->first / d_a.nx;
+        int idy = it->first % d_a.nx;
+        fileIdOf3b << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        }
+
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEHHTatInterface3c.begin(); it != setOfIndicesEHHTatInterface3c.end(); ++it) {
+        int idx = it->first / d_a.nx;
+        int idy = it->first % d_a.nx;
+        fileIdOf3c << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        }
+
+#ifdef DEBUG
 
     // filter indices of vertices connected to green
     std::set<int> comp_conn_to_green;
@@ -696,7 +787,16 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     std::cout << "DESC_3a:" << setOfIndicesGREYinEHET3a.size() << std::endl;
     std::cout << "DESC_3b:" << setOfIndicesEEHTatInterface3b.size() << std::endl;
     std::cout << "DESC_3c:" << setOfIndicesEHHTatInterface3c.size() << std::endl;
+    std::cout << "STAT_Na:" << setOfIndicesGREYinEHET3a.size() << std::endl;
+
     
+    fileIdOf3a.close();
+    fileIdOf3b.close();
+    fileIdOf3c.close();
+    
+    fileIdOfEET.close();
+    fileIdOfEHT.close();
+
     delete[] ngbr;
     
     return true;

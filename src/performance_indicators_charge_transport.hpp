@@ -454,11 +454,12 @@ compute_shortest_distance_from_sourceC_to_targetC(
         }
     }//compute_shortest_distance_from_multipleSource_to_target
    
-inline void
+inline std::pair<double,int>
 compute_shortest_distance_from_multipleSourceC_to_GREEN(
                                                   const std::vector<COLOR>& targetC,
                                                   graph_t* G,
                                                   const dim_g_t& d_g,
+                                                  const dim_a_t& d_a,
                                                   const vertex_colors_t& C,
                                                   const edge_weights_t& W,
                                                   std::vector<float>& d,
@@ -468,15 +469,27 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
     connect_multiple_same_color_and_GREEN pred(*G,targetC,C);
     determine_shortest_distances( G, W, source, pred, d);
     
+    double Pb = 0;
+    int count = 0;
+    foo_w_diss wfoo;
+    
     if(filename.size() != 0){
         std::ostringstream oss_out;
         for (unsigned int i = 0; i < d.size(); i++) {
             unsigned int c = C[i];
                 if ( fabs(d[i]) < std::numeric_limits<float>::max() ){
                 for (unsigned int iC=0; iC < targetC.size(); iC++){
-                    if (c == targetC[iC])
-                    oss_out << d[i] << std::endl;
-                    
+//                    if (c == targetC[iC])
+                    if ( (c == targetC[iC]) && (c != GREY)){
+                        int idx = i / d_a.nx;
+                        int idy = i % d_a.nx;
+                        oss_out << idy << " " << idx << " "  << d[i] << " " << C[i] << std::endl;
+                    }
+
+                    if  ( (c == targetC[iC])&& (c == BLACK) )  {Pb+=wfoo(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == ORANGE))  {Pb+=wfoo(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == WHITE) )  {Pb+=wfoo(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == YELLOW))  {Pb+=wfoo(d[i]);count++;}
                     }
             }
         }
@@ -486,6 +499,10 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
         f_out.write (buffer.c_str(),size);
         f_out.close();
     }
+    if (count == 0)
+        return std::pair<double,int> (0,0);
+    else
+        return std::pair<double,int> (Pb,count);
 }//compute_shortest_distance_from_multipleSource_to_target
     
     

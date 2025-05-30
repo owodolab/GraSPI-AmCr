@@ -174,13 +174,13 @@ namespace graspi {
             desc.push_back(p_desc);
 
             
-            p_desc.first = -1;  p_desc.second = "STAT_CC_EFFHole";//
+            p_desc.first = -1;  p_desc.second = "STAT_CC_EFFHole";// n_of_orange_or_gray_ccs
             desc.push_back(p_desc);
-            p_desc.first = -1;  p_desc.second = "STAT_n_EFFHole";//
+            p_desc.first = -1;  p_desc.second = "STAT_n_EFFHole";// n_of_orange_or_gray_vertices
             desc.push_back(p_desc);
-            p_desc.first = -1;  p_desc.second = "STAT_CC_EFFHole_conn_An";//
+            p_desc.first = -1;  p_desc.second = "STAT_CC_EFFHole_conn_An";// n_of_orange_or_gray_ccs_connected_to_anode
             desc.push_back(p_desc);
-            p_desc.first = -1;  p_desc.second = "STAT_n_EFFHole_conn_An";//
+            p_desc.first = -1;  p_desc.second = "STAT_n_EFFHole_conn_An";// n_of_orange_or_gray_vertices_connected_to_anode
             desc.push_back(p_desc);
 
         }

@@ -246,7 +246,7 @@ int main(int argc, char** argv){
                                           G,d_g,
                                           vertex_colors, d_a, edge_weights, edge_colors,
                                           vertex_ccs, ccs,
-                                                     pixelsize);
+                                                     pixelsize,descriptors);
     }
 
     timer.check("ALL performance indicators computed");

@@ -528,7 +528,8 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
                                                          const edge_colors_t& L,
                                                          const vertex_ccs_t& vCC,
                                                          const ccs_t& CC,
-                                                         double pixelsize){
+                                                         double pixelsize,
+                                                         graspi::DESC& descriptors){
     
 #ifdef DEBUG
     // filter indices of vertices connected to green
@@ -553,10 +554,10 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
     colorsForEffectiveHoleTransportPaths.push_back(BLACK);
     colorsForEffectiveHoleTransportPaths.push_back(ORANGE);
     colorsForEffectiveHoleTransportPaths.push_back(GREY);
-    compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveHoleTransportPaths,
-                                                      G, d_g, C, W,
+    std::pair<double,int>Pc=compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveHoleTransportPaths,
+                                                      G, d_g, d_a, C, W,
                                                       distances, filename);
-    
+    descriptors.update_desc("Pc",Pc.first);
 
     // repeat three above steps for distanced from any grey to red
     for(unsigned int  i=0; i<distances.size(); i++) distances[i] = 0;
@@ -565,11 +566,16 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
     colorsForEffectiveEleTransportPaths.push_back(WHITE);
     colorsForEffectiveEleTransportPaths.push_back(YELLOW);
     colorsForEffectiveEleTransportPaths.push_back(GREY);
-    compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveEleTransportPaths,
-                                                      G, d_g, C, W,
+    std::pair<double,int> Pb=compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveEleTransportPaths,
+                                                      G, d_g, d_a, C, W,
                                                       distances, filename);
+    descriptors.update_desc("Pb",Pb.first);
+    std::cout << "STAT_Pb:" << Pb.first << std::endl;
+    std::cout << "STAT_Pc:" << Pc.first << std::endl;
+    std::cout << "STAT_Nb:" << Pb.second << std::endl;
+    std::cout << "STAT_Nc:" << Pc.second << std::endl;
 
-    std::cout << "STAT_n " << d_g.n_bulk << std::endl;
+    std::cout << "STAT_n:" << d_g.n_bulk << std::endl;
 }
 
 } // namespace graspi
