@@ -570,12 +570,12 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
                                                       G, d_g, d_a, C, W,
                                                       distances, filename);
     descriptors.update_desc("Pb",Pb.first);
-    std::cout << "STAT_Pb:" << Pb.first << std::endl;
-    std::cout << "STAT_Pc:" << Pc.first << std::endl;
-    std::cout << "STAT_Nb:" << Pb.second << std::endl;
-    std::cout << "STAT_Nc:" << Pc.second << std::endl;
+    std::cout << "Pb:" << Pb.first << std::endl;
+    std::cout << "Pc:" << Pc.first << std::endl;
+    std::cout << "Nb:" << Pb.second << std::endl;
+    std::cout << "Nc:" << Pc.second << std::endl;
 
-    std::cout << "STAT_n:" << d_g.n_bulk << std::endl;
+    std::cout << "n:" << d_g.n_bulk << std::endl;
 }
 
 } // namespace graspi

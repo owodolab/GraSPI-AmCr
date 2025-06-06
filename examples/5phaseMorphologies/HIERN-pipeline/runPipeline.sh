@@ -7,6 +7,11 @@ CURRDIR=$PWD
 DATA=${CURRDIR}/data
 DESC=${CURRDIR}/descriptors
 
+mkdir -p distances
+mkdir -p descriptors
+mkdir -p figs 
+
+
 #Step 0
 echo "Step 0: copy Data"
 ./0-copyData.sh

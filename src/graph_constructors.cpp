@@ -468,9 +468,9 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     
     //step 4: create the second graph, this time add the edges between effective charge transport regions only.
 
-    std::ofstream fileIdOf3a("Ids3a.txt");
-    std::ofstream fileIdOf3b("Ids3b.txt");
-    std::ofstream fileIdOf3c("Ids3c.txt");
+    std::ofstream fileIdOfETmixed("IdsETmixed.txt");//Ids3a.txt");
+    std::ofstream fileIdOfEETacceptor("IdsEETacceptor.txt");//Ids3b.txt");
+    std::ofstream fileIdOfEHTdonor("IdsEHTdonor.txt");//Ids3c.txt");
 
     std::ofstream fileIdOfEHT("IdsEHT.txt");
     std::ofstream fileIdOfEET("IdsEET.txt");
@@ -490,11 +490,11 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     
     std::pair<int,char>* ngbr = new std::pair<int,char> [ngbr_size];
     
-    std::set<std::pair<int,int> > setOfIndicesGREYinEHET3a;
-    std::set<std::pair<int,int> > setOfIndicesEEHTatInterface3b;
-    std::set<std::pair<int,int> > setOfIndicesEHHTatInterface3c;
+    std::set<std::pair<int,int> > setOfIndicesGREYinET;
+    std::set<std::pair<int,int> > setOfIndicesEEHTatInterface;
+    std::set<std::pair<int,int> > setOfIndicesEHHTatInterface;
     
-    std::pair<int,int> pairForDesc3;
+    std::pair<int,int> pairForDescET; //effective interface+mixed descriptor
 
     for(unsigned int k = 0; k < d_a.nz; k++){
         for(unsigned int j = 0; j < d_a.ny; j++){
@@ -579,29 +579,29 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     if((C[s]+C[t] == 1) && (connectityFlagOfSource) && (connectityFlagOfTarget)){
                         
                         if (C[s] == WHITE) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == BLACK) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == WHITE) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == BLACK) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
@@ -618,27 +618,27 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                        
                         if (C[s] == WHITE) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == ORANGE) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                                w, o, G, W, L);
                         }
                         if (C[t] == WHITE) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
 
                         }
                         if (C[t] == ORANGE) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
 
@@ -659,27 +659,27 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                         
                         if (C[s] == YELLOW) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
 
                         }
                         if (C[s] == BLACK) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == YELLOW) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == BLACK) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
@@ -691,26 +691,26 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                         
                         if (C[s] == YELLOW) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == ORANGE) {
-                            pairForDesc3 = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(s, C[s]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == YELLOW) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface3c.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == ORANGE) {
-                            pairForDesc3 = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface3b.insert(pairForDesc3);
+                            pairForDescET = std::make_pair(t, C[t]);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
@@ -720,8 +720,8 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     }//I
                     
                     if( (C[s] == GREY)  && (connectityFlagOfSource) ){
-                        pairForDesc3 = std::make_pair(s, C[s]);
-                        setOfIndicesGREYinEHET3a.insert(pairForDesc3);
+                        pairForDescET = std::make_pair(s, C[s]);
+                        setOfIndicesGREYinET.insert(pairForDescET);
                         w=0.0;
                         make_update_edge_with_meta_vertex( s, green_vertex,
                                                           w, o, G, W, L);
@@ -733,8 +733,8 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
 
                     
                     if( (C[t] == GREY)  && (connectityFlagOfTarget) ){
-                        pairForDesc3 = std::make_pair(t, C[t]);
-                        setOfIndicesGREYinEHET3a.insert(pairForDesc3); //std::cout << t << " ";
+                        pairForDescET = std::make_pair(t, C[t]);
+                        setOfIndicesGREYinET.insert(pairForDescET); //std::cout << t << " ";
                         w=0.0;
                         make_update_edge_with_meta_vertex( t, green_vertex,
                                                           w, o, G, W, L);
@@ -750,22 +750,22 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
         }//j
     }//k
     
-    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesGREYinEHET3a.begin(); it != setOfIndicesGREYinEHET3a.end(); ++it) {
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesGREYinET.begin(); it != setOfIndicesGREYinET.end(); ++it) {
         int idx = it->first / d_a.nx;
         int idy = it->first % d_a.nx;
-        fileIdOf3a << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        fileIdOfETmixed << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
         }
 
-    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEEHTatInterface3b.begin(); it != setOfIndicesEEHTatInterface3b.end(); ++it) {
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEEHTatInterface.begin(); it != setOfIndicesEEHTatInterface.end(); ++it) {
         int idx = it->first / d_a.nx;
         int idy = it->first % d_a.nx;
-        fileIdOf3b << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        fileIdOfEETacceptor << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
         }
 
-    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEHHTatInterface3c.begin(); it != setOfIndicesEHHTatInterface3c.end(); ++it) {
+    for (std::set<std::pair<int, int> >::iterator it = setOfIndicesEHHTatInterface.begin(); it != setOfIndicesEHHTatInterface.end(); ++it) {
         int idx = it->first / d_a.nx;
         int idy = it->first % d_a.nx;
-        fileIdOf3c << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
+        fileIdOfEHTdonor << idy << " " << idx << " " << it->first << " " << it->second << std::endl;
         }
 
 #ifdef DEBUG
@@ -784,15 +784,15 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     
 #endif
 
-    std::cout << "DESC_3a:" << setOfIndicesGREYinEHET3a.size() << std::endl;
-    std::cout << "DESC_3b:" << setOfIndicesEEHTatInterface3b.size() << std::endl;
-    std::cout << "DESC_3c:" << setOfIndicesEHHTatInterface3c.size() << std::endl;
-    std::cout << "STAT_Na:" << setOfIndicesGREYinEHET3a.size() << std::endl;
+    std::cout << "n_M_eff:" << setOfIndicesGREYinET.size() << std::endl;
+    std::cout << "e_A_eff:" << setOfIndicesEEHTatInterface.size() << std::endl;
+    std::cout << "e_D_eff:" << setOfIndicesEHHTatInterface.size() << std::endl;
+    
 
     
-    fileIdOf3a.close();
-    fileIdOf3b.close();
-    fileIdOf3c.close();
+    fileIdOfETmixed.close();
+    fileIdOfEETacceptor.close();
+    fileIdOfEHTdonor.close();
     
     fileIdOfEET.close();
     fileIdOfEHT.close();
