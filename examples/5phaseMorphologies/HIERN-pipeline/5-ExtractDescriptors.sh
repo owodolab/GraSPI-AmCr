@@ -43,7 +43,7 @@ for i in $DESCS/*.log; do
     fi
     
     krecD=`echo descKrec-${filenameWOext}.txt`
-    KrG=`cat $DESC/$krecD`
+    KrG=`cat $DESCS/$krecD`
 
     MUhG=`cat $DESCS/descMob-${filenameWOext}.txt | sed -n '/effMHole:/p' | sed -e "s/effMHole: //"  `
     MUeG=`cat $DESCS/descMob-${filenameWOext}.txt | sed -n '/effMEle:/p' | sed -e "s/effMEle: //" `

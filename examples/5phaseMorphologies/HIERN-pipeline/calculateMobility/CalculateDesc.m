@@ -36,7 +36,7 @@ for fileId = 1:length(myFiles)
     imageFilename=sprintf('%s-M.png', filenameWOext);
     print(imageFilename,'-dpng');
 
-    MorphDesc3=zeros(sizeMorph);
+    MorphDesc=zeros(sizeMorph);
     CalcKrec=zeros(sizeMorph);
     MobEET=zeros(sizeMorph);
     MobEHT=zeros(sizeMorph);
@@ -44,9 +44,9 @@ for fileId = 1:length(myFiles)
     MorphEHT=zeros(sizeMorph);
     
 
-    filenameDesc3a=convertCharsToStrings(filenameWOext)+'-IdsETmixed.txt';
-    filenameDesc3b=convertCharsToStrings(filenameWOext)+'-IdsEETacceptor.txt';
-    filenameDesc3c=convertCharsToStrings(filenameWOext)+'-IdsEHTdonor.txt';
+    filenameDescETmixed=convertCharsToStrings(filenameWOext)+'-IdsETmixed.txt';
+    filenameDescEETacceptor=convertCharsToStrings(filenameWOext)+'-IdsEETacceptor.txt';
+    filenameDescEHTdonor=convertCharsToStrings(filenameWOext)+'-IdsEHTdonor.txt';
     
     filenamePhiA=convertCharsToStrings(filenameWOext)+'-phiA.txt';
     filenamePhiD=convertCharsToStrings(filenameWOext)+'-phiD.txt';
@@ -75,31 +75,31 @@ for fileId = 1:length(myFiles)
     end
 
 
-    D3a=importdata(filenameDesc3a);
-    sizeD3a=size(D3a);
-    for i=1:sizeD3a(1)
-        x=D3a(i,1);
-        y=D3a(i,2);
-        color=D3a(i,4);
-        MorphDesc3(y+1,x+1)=2;
+    DETmixed=importdata(filenameDescETmixed);
+    sizeDETmixed=size(DETmixed);
+    for i=1:sizeDETmixed(1)
+        x=DETmixed(i,1);
+        y=DETmixed(i,2);
+        color=DETmixed(i,4);
+        MorphDesc(y+1,x+1)=2;
     end
 
-    D3b=importdata(filenameDesc3b);
-    sizeD3b=size(D3b);
-    for i=1:sizeD3b(1)
-        x=D3b(i,1);
-        y=D3b(i,2);
-        color=D3b(i,4);
-        MorphDesc3(y+1,x+1)=1;
+    DEETacceptor=importdata(filenameDescEETacceptor);
+    sizeDEETacceptor=size(DEETacceptor);
+    for i=1:sizeDEETacceptor(1)
+        x=DEETacceptor(i,1);
+        y=DEETacceptor(i,2);
+        color=DEETacceptor(i,4);
+        MorphDesc(y+1,x+1)=1;
     end
 
-    D3c=importdata(filenameDesc3c);
-    sizeD3c=size(D3c);
-    for i=1:sizeD3c(1)
-        x=D3c(i,1);
-        y=D3c(i,2);
-        color=D3c(i,4);
-        MorphDesc3(y+1,x+1)=3;
+    DEHTdonor=importdata(filenameDescEHTdonor);
+    sizeDEHTdonor=size(DEHTdonor);
+    for i=1:sizeDEHTdonor(1)
+        x=DEHTdonor(i,1);
+        y=DEHTdonor(i,2);
+        color=DEHTdonor(i,4);
+        MorphDesc(y+1,x+1)=3;
     end
 
     HdepMobEHT=zeros(sizeMorph(1),1);
@@ -193,16 +193,16 @@ for fileId = 1:length(myFiles)
     imageFilename=sprintf('%s-AvgMobilityEET.png', filenameWOext);
     print(imageFilename,'-dpng');
 
-    if ~isempty(HEffdepMobEHT)
-        MobHDesc=mean(HEffdepMobEHT(HEffdepMobEHT ~= 0));
+    if all(HEffdepMobEHT(:) == 0)
+        MobHDesc = 0.0;
     else
-        MobHDesc = 0;
+        MobHDesc=mean(HEffdepMobEHT(HEffdepMobEHT ~= 0));
     end
 
-    if ~isempty(HEffdepMobEET)
-        MobEDesc=mean(HEffdepMobEET(HEffdepMobEET ~= 0));
-    else
+    if all(HEffdepMobEET(:)== 0)
         MobEDesc = 0;
+    else
+        MobEDesc=mean(HEffdepMobEET(HEffdepMobEET ~= 0));
     end
     
     filenameDesc=sprintf('descMob-%s',filename);
