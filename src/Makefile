@@ -3,7 +3,7 @@ all: graspi5phases
 
 # graspi requires boost library, install and add to you path or explicitly provide the path here. 
 # graspi at the time of release was tested with version boost_1_72_0
-BOOSTLIB="/Users/olgawodo/Packages/boost_1_72_0"
+BOOSTLIB="/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/boost_1_88_0"
 
 COPT = -I${BOOSTLIB} #-g3 -DDEBUG
 

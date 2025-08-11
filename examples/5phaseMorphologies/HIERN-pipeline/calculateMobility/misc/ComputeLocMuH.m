@@ -16,7 +16,13 @@ function locMu = ComputeLocMuH(ixInterest,iyInterest,twoLayersUp,phiDMorph,Morph
         end
     end
 
-    CC = bwlabeln(twoLayersUp,8);
+    CC = bwlabel_ol(twoLayersUp,8);
+
+%     save('/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/examples/5phaseMorphologies/HIERN-pipeline/Tempfiles/tempCC.mat', 'twoLayersUp');
+%     cmd=['cd /data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/examples/5phaseMorphologies/HIERN-pipeline/;ml pythonclever; python CC.py tempCC'];
+%     system(cmd)    
+%     load('/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/examples/5phaseMorphologies/HIERN-pipeline/Tempfiles/tempCC.mat', 'labeledImage');
+%    CC=labeledImage;
 
     for ix=1:sizeLay(2)
         if( ( CC(2,ix) == CC(1,ixInterest) ) &&( twoLayersUp(2,ix) == 1 ))

@@ -5,23 +5,30 @@ MAINDIR=$PWD
 PIXELSIZE=1
 
 #GRASPI5Phases=/Users/olgawodo/MINE/PROJECTS/GraSPI/AmCrGraSPI/src/GRASPI5Phases
-GRASPI5Phases=/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/src/graspi5phases
+#GRASPI5Phases=/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/src/graspi5phases
+GRASPI5Phases=$1
 
 DATA="$MAINDIR/src_data"
 DISTANCES="$MAINDIR/distances"
 DESCS="$MAINDIR/descriptors"
-VISMORPH="$MAINDIR/visualMorph"
+VISMORPH="$MAINDIR/visualMorph2"
 
 cd $DATA
 
 f=0;
-for i in Morph*sv_1.txt; do
+#for i in Morph*sv_1.txt; do
+for i in $2; do
     f=$(($f + 1))
     FILENAME=$i
+ 
     BASEFILENAME=`echo ${i} | sed 's/.txt//'` #remove txt-file extension
     echo ""
     echo "analyzing file $FILENAME"
-    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -LdD 10 -LdA 10 > $DESCS/descriptors.$BASEFILENAME.log
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 > $DESCS/descriptors.$BASEFILENAME.log
+
+    cp ${BASEFILENAME}-phiA.txt $DISTANCES/
+    cp ${BASEFILENAME}-phiD.txt $DISTANCES/
+    cp ${BASEFILENAME}.txt $DISTANCES/
 
     for j in *Distances*.txt; do
         cp $j $DISTANCES/${BASEFILENAME}-${j}
@@ -43,13 +50,6 @@ for i in Morph*sv_1.txt; do
 done
 
 cd $MAINDIR
-#!/bin/bash
-
-MAINDIR=$PWD
-
-
-
-
 
 
 

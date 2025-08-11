@@ -1,6 +1,6 @@
 clear;
 
-myFiles = dir('MorphParamSet*MorphoDesc.txt'); %gets all mat files in struct
+myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
 nMorph = length(myFiles);
 
 
@@ -118,9 +118,7 @@ for fileId = 1:length(myFiles)
 
     figure;
     imagesc(MorphDesc);
-%     clim([0 3]);
     caxis([0 3]);
-
     colormap(customMapDesc);
     imageFilename=sprintf('%s-Desc.png', filenameWOext);
     print(imageFilename,'-dpng');
@@ -128,18 +126,14 @@ for fileId = 1:length(myFiles)
 
     figure;
     imagesc(MorphEET);
-%     clim([0 1]);
     caxis([0 1]);
-
     colormap(customEET);
     imageFilename=sprintf('%s-EET.png', filenameWOext);
     print(imageFilename,'-dpng');
 
     figure;
     imagesc(MorphEHT);
-%     clim([0 1]);
     caxis([0 1]);
-
     colormap(customEHT);
     imageFilename=sprintf('%s-EHT.png', filenameWOext);
     print(imageFilename,'-dpng');
@@ -155,7 +149,7 @@ for fileId = 1:length(myFiles)
     
     figure;
     imagesc(DistHole);
-%    clim([0 3]);
+%    caxis([0 3]);
 %    colormap(customMapDesc);
     imageFilename=sprintf('%s-DistHol.png', filenameWOext);
     print(imageFilename,'-dpng');

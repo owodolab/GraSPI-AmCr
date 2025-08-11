@@ -1,10 +1,9 @@
-clear;
 
 %set(groot, 'DefaultFigureRenderer', 'painters');
 
 
-myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
-nMorph = length(myFiles);
+% myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
+% nMorph = length(myFiles);
 
 customMap = [0 0 0;    % 0- Black
              1 1 1;    % 1- White
@@ -27,19 +26,18 @@ customEET = [1 1 1;    % 0- White
              0 0 1];    % 1- Blue (bottom)
 
 
-for fileId = 1:length(myFiles)
-    filename = myFiles(fileId).name;
+    filename = inputFile;
     filenameWOext = extractBefore(filename, ".");
 
 
     Morph =  readmatrix(filename,'NumHeaderLines',1);
     sizeMorph = size(Morph);
-    imagesc(Morph);
+    imagesc(Morph(end:-1:1,:));
     colormap(customMap);
     caxis([0 7]);
     imageFilename=sprintf('%s-M.png', filenameWOext);
     print(imageFilename,'-dpng');
-
+    pause(1)
     MorphDesc3=zeros(sizeMorph);
     CalcKrec=zeros(sizeMorph);
 
@@ -124,17 +122,18 @@ for fileId = 1:length(myFiles)
 
     
     figure;
-    imagesc(CalcKrec);
+    imagesc(CalcKrec(end:-1:1,:));
 %    caxis([0 1]);
 %    colormap(customMapDesc);
     colorbar;
-    imageFilename=sprintf('%s-krec.png', filenameWOext);
-    print(imageFilename,'-dpng');
-
+    imageFilename=sprintf('%s-krec', filenameWOext);
+    
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
+    
     filenameDesc=sprintf('descKrec-%s',filename);
     fileID = fopen(filenameDesc, 'w');
     fprintf(fileID, '%f\n', 4*krecDesc/countN2);
     fclose(fileID);
-
+    pause(1)
     close all;
-end

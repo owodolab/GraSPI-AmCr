@@ -1,7 +1,5 @@
-clear;
-
-myFiles = dir('MorphParamSet*MorphoDesc.txt'); %gets all mat files in struct
-nMorph = length(myFiles);
+% myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
+% nMorph = length(myFiles);
 
 
 customMap = [0 0 0;    % 0- Black
@@ -24,8 +22,7 @@ customEHT = [1 1 1;    % 0- White
 customEET = [1 1 1;    % 0- White
              0 0 1];    % 1- Blue (bottom)
 
-for fileId = 1:length(myFiles)
-    filename = myFiles(fileId).name;
+    filename = inputFile;
     filenameWOext = extractBefore(filename, ".");
 
     Morph =  readmatrix(filename,'NumHeaderLines',1);
@@ -117,32 +114,33 @@ for fileId = 1:length(myFiles)
     end 
 
     figure;
-    imagesc(MorphDesc);
-%     clim([0 3]);
+    imagesc(MorphDesc(end:-1:1,:));
     caxis([0 3]);
-
     colormap(customMapDesc);
     imageFilename=sprintf('%s-Desc.png', filenameWOext);
-    print(imageFilename,'-dpng');
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
 
-
+    pause(1);
+    
     figure;
-    imagesc(MorphEET);
-%     clim([0 1]);
+    imagesc(MorphEET(end:-1:1,:));
     caxis([0 1]);
-
     colormap(customEET);
     imageFilename=sprintf('%s-EET.png', filenameWOext);
-    print(imageFilename,'-dpng');
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
+    
+    pause(1);
 
     figure;
-    imagesc(MorphEHT);
-%     clim([0 1]);
+    imagesc(MorphEHT(end:-1:1,:));
     caxis([0 1]);
-
     colormap(customEHT);
     imageFilename=sprintf('%s-EHT.png', filenameWOext);
-    print(imageFilename,'-dpng');
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
+    pause(1);
 
 
     DistEHT=importdata(filenameDistHole);
@@ -154,11 +152,13 @@ for fileId = 1:length(myFiles)
     end
     
     figure;
-    imagesc(DistHole);
-%    clim([0 3]);
+    imagesc(DistHole(end:-1:1,:));
+%    caxis([0 3]);
 %    colormap(customMapDesc);
     imageFilename=sprintf('%s-DistHol.png', filenameWOext);
-    print(imageFilename,'-dpng');
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
+    pause(1);
 
 
     DistEET=importdata(filenameDistElec);
@@ -171,36 +171,35 @@ for fileId = 1:length(myFiles)
         end
    end 
    
-    figure;
-    imagesc(DistElec);
-%    clim([0 3]);
-%    colormap(customMapDesc);
-    imageFilename=sprintf('%s-DistElec.png', filenameWOext);
-    print(imageFilename,'-dpng');
-
-
-     figure;
-    imagesc(DistElec);
-%    clim([0 3]);
-%    colormap(customMapDesc);
-    imageFilename=sprintf('%s-DistElec.png', filenameWOext);
-    print(imageFilename,'-dpng');
-
-    figure;
-    imagesc(phiAMorph);
-%    clim([0 3]);
-%    colormap(customMapDesc);
-    imageFilename=sprintf('%s-phiA.png', filenameWOext);
-    print(imageFilename,'-dpng');
-
-
-    figure;
-    imagesc(phiDMorph);
-%    clim([0 3]);
-%    colormap(customMapDesc);
-    imageFilename=sprintf('%s-phiD.png', filenameWOext);
-    print(imageFilename,'-dpng');
+%     figure;
+%     imagesc(DistElec);
+% %    clim([0 3]);
+% %    colormap(customMapDesc);
+%     imageFilename=sprintf('%s-DistElec.png', filenameWOext);
+%     print(imageFilename,'-dpng');
+% 
+% 
+%      figure;
+%     imagesc(DistElec);
+% %    clim([0 3]);
+% %    colormap(customMapDesc);
+%     imageFilename=sprintf('%s-DistElec.png', filenameWOext);
+%     print(imageFilename,'-dpng');
+% 
+%     figure;
+%     imagesc(phiAMorph);
+% %    clim([0 3]);
+% %    colormap(customMapDesc);
+%     imageFilename=sprintf('%s-phiA.png', filenameWOext);
+%     print(imageFilename,'-dpng');
+% 
+% 
+%     figure;
+%     imagesc(phiDMorph);
+% %    clim([0 3]);
+% %    colormap(customMapDesc);
+%     imageFilename=sprintf('%s-phiD.png', filenameWOext);
+%     print(imageFilename,'-dpng');
 
     close all;
 
-end
