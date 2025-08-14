@@ -3,6 +3,7 @@
 % -------------------------------------------------------------------------
 
 myFiles = dir('*.mat'); %gets all mat files in struct
+% myFiles = dir('BilayerTest.mat'); %gets all mat files in struct
 for fileId = 1:length(myFiles)
     NameFile = myFiles(fileId).name;
     NameFileWoExt = extractBefore(NameFile, ".");
@@ -12,8 +13,9 @@ for fileId = 1:length(myFiles)
     PhiAFileName = sprintf("Morph%s-phiA.txt",NameFileWoExt);
 
     nxyz = [256 1 512];
-    FlagBC = [0 0 1];
-
+%     load(NameFile)
+%     nxyz = SIZ.nxyz;
+    FlagBC = [0 1 1];
     % -------------------------------------------------------------------------
     % User parameters
     % -------------------------------------------------------------------------
@@ -33,6 +35,9 @@ for fileId = 1:length(myFiles)
     [row,col] = find(LabelsImg==0);
 
     height=min(col);
+    if isempty(col)
+    height=max(nxyz(3));
+    end
     %height=140;
     width=nxyz(1);
 

@@ -5,6 +5,7 @@ MAINDIR=$PWD
 PIXELSIZE=1
 
 GRASPI5Phases=/Users/olgawodo/MINE/PROJECTS/GraSPI/AmCrGraSPI/src/GRASPI5Phases
+#GRASPI5Phases=/data-er/y.ameslon/StructureAndPerformance/CloneTempGraSPI/GraSPI-AmCr/src/graspi5phases
 
 
 DATA="$MAINDIR/data"
@@ -16,6 +17,7 @@ cd $DATA
 
 f=0;
 for i in Morph*MorphoDesc.txt; do
+#for i in Morph*BilayerTest.txt; do
     f=$(($f + 1))
     FILENAME=$i
     BASEFILENAME=`echo ${i} | sed 's/.txt//'` #remove txt-file extension
@@ -43,6 +45,13 @@ for i in Morph*MorphoDesc.txt; do
 done
 
 cd $MAINDIR
+#!/bin/bash
+
+MAINDIR=$PWD
+
+
+
+
 
 
 
