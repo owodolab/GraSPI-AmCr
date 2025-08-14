@@ -10,8 +10,8 @@ echo "name MUeG MUhG krG ETA dG $NAMEDESC "> AllDescriptors.txt
 
 for i in $DESCS/*.log; do
     filename=$i
-    #filenameWOext=`echo $i | cut -d "." -f 2`
-    filenameWOext=`echo $i | cut -d "." -f 3`
+    filenameWOext=`echo $i | cut -d "." -f 2`
+    #filenameWOext=`echo $i | cut -d "." -f 3`
     echo "Processing: $filenameWOext"
     #echo "file is $filenameWOext"
     LOCALDESC=`cat $i | cut -d ':' -f2 | paste -sd' ' -`
