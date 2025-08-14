@@ -1,6 +1,7 @@
 clear;
 
 myFiles = dir('MorphParamSet*MorphoDesc.txt'); %gets all mat files in struct
+% myFiles = dir('MorphBilayerTest.txt'); %gets all mat files in struct
 nMorph = length(myFiles);
 
 
@@ -32,7 +33,8 @@ for fileId = 1:length(myFiles)
     sizeMorph = size(Morph);
     imagesc(Morph);
     colormap(customMap);
-    clim([0 7]);
+%    clim([0 7]);
+     caxis([0 7]);
     imageFilename=sprintf('%s-M.png', filenameWOext);
     print(imageFilename,'-dpng');
     
@@ -118,7 +120,9 @@ for fileId = 1:length(myFiles)
 
     figure;
     imagesc(MorphDesc);
-    clim([0 3]);
+%     clim([0 3]);
+    caxis([0 3]);
+
     colormap(customMapDesc);
     imageFilename=sprintf('%s-Desc.png', filenameWOext);
     print(imageFilename,'-dpng');
@@ -126,14 +130,18 @@ for fileId = 1:length(myFiles)
 
     figure;
     imagesc(MorphEET);
-    clim([0 1]);
+%     clim([0 1]);
+    caxis([0 1]);
+
     colormap(customEET);
     imageFilename=sprintf('%s-EET.png', filenameWOext);
     print(imageFilename,'-dpng');
 
     figure;
     imagesc(MorphEHT);
-    clim([0 1]);
+%     clim([0 1]);
+    caxis([0 1]);
+
     colormap(customEHT);
     imageFilename=sprintf('%s-EHT.png', filenameWOext);
     print(imageFilename,'-dpng');

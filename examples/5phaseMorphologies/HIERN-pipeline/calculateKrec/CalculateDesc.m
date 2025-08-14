@@ -4,6 +4,8 @@ clear;
 
 
 myFiles = dir('MorphParamSet*MorphoDesc.txt'); %gets all mat files in struct
+% myFiles = dir('MorphBilayerTest.txt'); %gets all mat files in struct
+
 nMorph = length(myFiles);
 
 customMap = [0 0 0;    % 0- Black
@@ -36,7 +38,9 @@ for fileId = 1:length(myFiles)
     sizeMorph = size(Morph);
     imagesc(Morph);
     colormap(customMap);
-    clim([0 7]);
+%     clim([0 7]);
+    caxis([0 7]);
+
     imageFilename=sprintf('%s-M.png', filenameWOext);
     print(imageFilename,'-dpng');
 

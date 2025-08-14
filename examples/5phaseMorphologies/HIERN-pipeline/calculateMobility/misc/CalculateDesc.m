@@ -1,8 +1,6 @@
 clear;
 
-myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
-% myFiles = dir('MorphBilayerTest.txt'); %gets all mat files in struct
-
+myFiles = dir('MorphParamSet*MorphoDesc.txt'); %gets all mat files in struct
 nMorph = length(myFiles);
 
 customMap = [0 0 0;    % 0- Black
@@ -27,15 +25,14 @@ customEET = [1 1 1;    % 0- White
 
 
 for fileId = 1:length(myFiles)
-    fileId
     filename = myFiles(fileId).name;
-    filenameWOext = extractBefore(filename, '.');
+    filenameWOext = extractBefore(filename, ".");
 
     Morph =  readmatrix(filename,'NumHeaderLines',1);
     sizeMorph = size(Morph);
     imagesc(Morph);
     colormap(customMap);
-    caxis([0 7]);
+    clim([0 7]);
     imageFilename=sprintf('%s-M.png', filenameWOext);
     print(imageFilename,'-dpng');
 
@@ -46,51 +43,7 @@ for fileId = 1:length(myFiles)
     MorphEET=zeros(sizeMorph);
     MorphEHT=zeros(sizeMorph);
     
-    % -----------------------------------------------------------------------
-    % ORYA code: Preparation of neighbors for CCL and of point to point distances
-    % -----------------------------------------------------------------------
-    
-    % Il faut avoir la taille des images nxyz
-    nxyz = [sizeMorph(2) sizeMorph(1) 1]; 
-    dxyz = [1 1 1];
 
-    % Define bondary conditions
-    FlagBC = [0 1 1]; 
-
-    % Choose connectivity
-    Connectivity = 'extended';
-
-    % Needed for CCL (do not touch)
-    Nnodes = prod(nxyz); Ndim = numel(find(nxyz>1));
-    [ AllShiftDirs ] = Mesh_AllShiftDirs( nxyz );
-    Nblocs=[1 1 1]; Ncpu=prod(Nblocs);
-    [ Core_Carto, StartStopInd_percpu ] = DomainDecompo_MappingsGlobal( nxyz, Ncpu, Nblocs );
-     Halosize = 2; ProcNum = 1;
-    [ NoAllNeighboursCore_PerShiftDir ] = DomainDecompo_Neighbours_OfWorker( Core_Carto, AllShiftDirs, Nblocs, FlagBC, ProcNum);
-    [ LocalOwnedNodes_GlobalCarto, AllNodes_GlobalCarto_ord, HaloNodes_GlobalCarto_ord, MyHaloNodes_NoWorkers, IndLoc_Halo1, IndLoc_Halo2 ] = DomainDecompo_MappingsPerWorker( ProcNum, nxyz, FlagBC, Ncpu, Nblocs, Halosize, StartStopInd_percpu );
-    [ NEI.NoNeighb ] = Mesh_NoNeighbours( AllNodes_GlobalCarto_ord, AllShiftDirs, nxyz, FlagBC );
-    NEI.NNeighb = size(NEI.NoNeighb,2);
-
-    [ MeshCoord ] = MeshCoordinate ( nxyz, dxyz );
-    MeshCoord = MeshCoord + 0.5;
-    DeltaX = zeros(nxyz(1),nxyz(1)); % distances x taking into account BC along x direction
-    for ix = 1:nxyz(1)
-        PointCoord = [ix 1 1];
-        [ PointMeshCoordXYZ ] = MeshClosestCoordToPoint(nxyz, dxyz, MeshCoord, PointCoord, FlagBC);
-        IndUseful = find(PointMeshCoordXYZ(:,2)==1);
-        DeltaX(ix,:) = PointMeshCoordXYZ(IndUseful,1);
-    end
-
-    Weights = [0.1 0.1 1]; % [0.1 0.1 1] for up and down 
-    MorphoTypesD = [0 3 5]; % [0 3 5] for up (donor), [1 3 7] for down, 
-    MorphoTypesA = [1 3 7]; % [0 3 5] for up (acceptor), [1 3 7] for down, 
-    SourceTargetPlanesUp = [1 2]; % Number of source and target planes; [1 2] for up, [2,1] for down
-    SourceTargetPlanesDown = [2 1]; % Number of source and target planes; [1 2] for up, [2,1] for down   
-
-    % -----------------------------------------------------------------------
-    % Back to Olga's code
-    % -----------------------------------------------------------------------
-    
     filenameDescETmixed=convertCharsToStrings(filenameWOext)+'-IdsETmixed.txt';
     filenameDescEETacceptor=convertCharsToStrings(filenameWOext)+'-IdsEETacceptor.txt';
     filenameDescEHTdonor=convertCharsToStrings(filenameWOext)+'-IdsEHTdonor.txt';
@@ -153,32 +106,25 @@ for fileId = 1:length(myFiles)
     HdepMobEET=zeros(sizeMorph(1),1);
     HEffdepMobEHT=zeros(sizeMorph(1),1);
     HEffdepMobEET=zeros(sizeMorph(1),1);
-    
+
     for iy=2:sizeMorph(1)-1
-        iy
-        
-        sumEffEH=0; itEffH=0;
-        sumEffEE=0; itEffE=0;
-        
+%            iy
+            sumEffEH=0; itEffH=0;
+            sumEffEE=0; itEffE=0;
         for ix=1:sizeMorph(2)
-            
             twoLayersUp=MorphEHT(iy:iy+1,:);
             twoLayersDown=MorphEET(iy-1:iy,:);
             currPhase=Morph(iy,ix);
-            
             if ( (currPhase == 0 ) || (currPhase == 3 ) || (currPhase == 5 ))
-                % locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
-                locMuH = ComputeLocMuH_ORYA(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesD,Weights,SourceTargetPlanesUp);
+                locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
                 if(MorphEHT(iy,ix)==1)
                     sumEffEH=sumEffEH+locMuH;
                     itEffH=itEffH+1;
                     MobEHT(iy,ix)=locMuH;
                 end
             end
-            
             if ( (currPhase == 1 ) || (currPhase == 3 ) || (currPhase == 7 ))
-                % locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
-                locMuE=ComputeLocMuH_ORYA(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesA,Weights,SourceTargetPlanesDown);
+                locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
                 if (MorphEET(iy,ix) == 1)
                     sumEffEE=sumEffEE+locMuE;
                     itEffE=itEffE+1;
@@ -186,24 +132,27 @@ for fileId = 1:length(myFiles)
                 end
             end
             
+ 
         end
-        
         HdepMobEHT(iy)=mean(MobEHT(iy,:));
         HdepMobEET(iy)=mean(MobEET(iy,:));
+
         if(itEffH ~= 0)
             HEffdepMobEHT(iy)=sumEffEH/itEffH;
         end
         if(itEffE ~=0)
             HEffdepMobEET(iy)=sumEffEE/itEffE;
         end
-        %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEHT(iy), sumEffEH, itEffH, HEffdepMobEHT(iy) );
-        %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEET(iy), sumEffEE, itEffE, HEffdepMobEET(iy) );
-        
+%        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEHT(iy), sumEffEH, itEffH, HEffdepMobEHT(iy) );
+%        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEET(iy), sumEffEE, itEffE, HEffdepMobEET(iy) );
+
+    
     end
+
     
     figure;
     imagesc(MobEHT);
-    caxis([0 1]);
+    clim([0 1]);
 %    colormap(customMapDesc);
     colorbar;
     imageFilename=sprintf('%s-MobilityEHT.png', filenameWOext);
@@ -212,7 +161,7 @@ for fileId = 1:length(myFiles)
 
     figure;
     imagesc(MobEET);
-    caxis([0 1]);
+    clim([0 1]);
     colorbar;
     imageFilename=sprintf('%s-MobilityEET.png', filenameWOext);
     print(imageFilename,'-dpng');
@@ -223,8 +172,8 @@ for fileId = 1:length(myFiles)
     indexOfH=linspace(1,size(AvgMobEHT,1),size(AvgMobEHT,1));
 
     figure; hold on;
-    xlabel('Avg Hole Mobility');
-    ylabel('Height');
+    xlabel("Avg Hole Mobility");
+    ylabel("Height");
     xlim([0 1]);
     plot(AvgMobEHT,indexOfH,'DisplayName','Av-gl');
     plot(HdepMobEHT,indexOfH,'DisplayName','Av-H');
@@ -234,8 +183,8 @@ for fileId = 1:length(myFiles)
     print(imageFilename,'-dpng');
 
     figure; hold on;
-    xlabel('Avg Electron Mobility');
-    ylabel('Height');
+    xlabel("Avg Electron Mobility");
+    ylabel("Height");
     xlim([0 1]);
     plot(AvgMobEET,indexOfH,'DisplayName','Av-gl');
     plot(HdepMobEET,indexOfH,'DisplayName','Av-H');
@@ -272,5 +221,3 @@ for fileId = 1:length(myFiles)
     fclose(fileID);
 
 end
-%     save(['/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/examples/5phaseMorphologies/HIERN-pipeline/calculateMobility/MobEHT_' filenameWOext(1:end-4) '.mat'],'MobEHT')
-%     save(['/data-er/y.ameslon/StructureAndPerformance/GraSPI/GraSPI-AmCr/examples/5phaseMorphologies/HIERN-pipeline/calculateMobility/MobEET_' filenameWOext(1:end-4) '.mat'],'MobEET')
