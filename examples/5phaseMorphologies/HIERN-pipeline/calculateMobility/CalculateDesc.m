@@ -1,6 +1,6 @@
 clear;
 
-myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
+myFiles = dir('Morph*MorphoDesc.txt'); %gets all mat files in struct
 % myFiles = dir('MorphBilayerTest.txt'); %gets all mat files in struct
 
 nMorph = length(myFiles);
