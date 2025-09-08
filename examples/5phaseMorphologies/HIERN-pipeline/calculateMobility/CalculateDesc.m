@@ -44,7 +44,51 @@ for fileId = 1:1%length(myFiles)
     MorphEET=zeros(sizeMorph);
     MorphEHT=zeros(sizeMorph);
     
+    % -----------------------------------------------------------------------
+    % ORYA code: Preparation of neighbors for CCL and of point to point distances
+    % -----------------------------------------------------------------------
+    
+    % Il faut avoir la taille des images nxyz
+    nxyz = [sizeMorph(2) sizeMorph(1) 1]; 
+    dxyz = [1 1 1];
 
+    % Define bondary conditions
+    FlagBC = [0 1 1]; 
+
+    % Choose connectivity
+    Connectivity = 'extended';
+
+    % Needed for CCL (do not touch)
+    Nnodes = prod(nxyz); Ndim = numel(find(nxyz>1));
+    [ AllShiftDirs ] = Mesh_AllShiftDirs( nxyz );
+    Nblocs=[1 1 1]; Ncpu=prod(Nblocs);
+    [ Core_Carto, StartStopInd_percpu ] = DomainDecompo_MappingsGlobal( nxyz, Ncpu, Nblocs );
+     Halosize = 2; ProcNum = 1;
+    [ NoAllNeighboursCore_PerShiftDir ] = DomainDecompo_Neighbours_OfWorker( Core_Carto, AllShiftDirs, Nblocs, FlagBC, ProcNum);
+    [ LocalOwnedNodes_GlobalCarto, AllNodes_GlobalCarto_ord, HaloNodes_GlobalCarto_ord, MyHaloNodes_NoWorkers, IndLoc_Halo1, IndLoc_Halo2 ] = DomainDecompo_MappingsPerWorker( ProcNum, nxyz, FlagBC, Ncpu, Nblocs, Halosize, StartStopInd_percpu );
+    [ NEI.NoNeighb ] = Mesh_NoNeighbours( AllNodes_GlobalCarto_ord, AllShiftDirs, nxyz, FlagBC );
+    NEI.NNeighb = size(NEI.NoNeighb,2);
+
+    [ MeshCoord ] = MeshCoordinate ( nxyz, dxyz );
+    MeshCoord = MeshCoord + 0.5;
+    DeltaX = zeros(nxyz(1),nxyz(1)); % distances x taking into account BC along x direction
+    for ix = 1:nxyz(1)
+        PointCoord = [ix 1 1];
+        [ PointMeshCoordXYZ ] = MeshClosestCoordToPoint(nxyz, dxyz, MeshCoord, PointCoord, FlagBC);
+        IndUseful = find(PointMeshCoordXYZ(:,2)==1);
+        DeltaX(ix,:) = PointMeshCoordXYZ(IndUseful,1);
+    end
+
+    Weights = [0.1 0.1 1]; % [0.1 0.1 1] for up and down 
+    MorphoTypesD = [0 3 5]; % [0 3 5] for up (donor), [1 3 7] for down, 
+    MorphoTypesA = [1 3 7]; % [0 3 5] for up (acceptor), [1 3 7] for down, 
+    SourceTargetPlanesUp = [1 2]; % Number of source and target planes; [1 2] for up, [2,1] for down
+    SourceTargetPlanesDown = [2 1]; % Number of source and target planes; [1 2] for up, [2,1] for down   
+
+    % -----------------------------------------------------------------------
+    % Back to Olga's code
+    % -----------------------------------------------------------------------
+    
     filenameDescETmixed=convertCharsToStrings(filenameWOext)+'-IdsETmixed.txt';
     filenameDescEETacceptor=convertCharsToStrings(filenameWOext)+'-IdsEETacceptor.txt';
     filenameDescEHTdonor=convertCharsToStrings(filenameWOext)+'-IdsEHTdonor.txt';
@@ -113,9 +157,11 @@ for fileId = 1:1%length(myFiles)
             sumEffEH=0; itEffH=0;
             sumEffEE=0; itEffE=0;
         for ix=1:sizeMorph(2)
+            
             twoLayersUp=MorphEHT(iy:iy+1,:);
             twoLayersDown=MorphEET(iy-1:iy,:);
             currPhase=Morph(iy,ix);
+            
             if ( (currPhase == 0 ) || (currPhase == 3 ) || (currPhase == 5 ))
                 locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
                 if(MorphEHT(iy,ix)==1)
@@ -124,6 +170,7 @@ for fileId = 1:1%length(myFiles)
                     MobEHT(iy,ix)=locMuH;
                 end
             end
+            
             if ( (currPhase == 1 ) || (currPhase == 3 ) || (currPhase == 7 ))
                 locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
                 if (MorphEET(iy,ix) == 1)
@@ -135,6 +182,7 @@ for fileId = 1:1%length(myFiles)
             
  
         end
+        
         HdepMobEHT(iy)=mean(MobEHT(iy,:));
         HdepMobEET(iy)=mean(MobEET(iy,:));
 
