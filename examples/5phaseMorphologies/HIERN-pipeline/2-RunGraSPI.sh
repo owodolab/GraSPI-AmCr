@@ -32,8 +32,8 @@ for i in Morph*MorphoDesc.txt; do
     cp ${BASEFILENAME}-phiD.txt $VISMORPH/
 
 
-    cp ${BASEFILENAME}-phiA.txt ../$VISMORPH/
-    cp ${BASEFILENAME}-phiB.txt ../$VISMORPH/
+    cp ${BASEFILENAME}-phiA.txt $VISMORPH/
+    cp ${BASEFILENAME}-phiD.txt $VISMORPH/
 
     cp $i $VISMORPH/
     for j in *Ids*.txt; do
