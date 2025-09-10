@@ -463,6 +463,7 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
                                                   const vertex_colors_t& C,
                                                   const edge_weights_t& W,
                                                   std::vector<float>& d,
+                                                  double LdD, double LdA,
                                                   std::string filename = ""
                                                   ){
     vertex_t source = d_g.id(GREEN);
@@ -471,7 +472,8 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
     
     double Pb = 0;
     int count = 0;
-    foo_w_diss wfoo;
+    foo_w_dissLd wfooD(LdD);
+    foo_w_dissLd wfooA(LdA);
     
     if(filename.size() != 0){
         std::ostringstream oss_out;
@@ -486,10 +488,10 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
                         oss_out << idy << " " << idx << " "  << d[i] << " " << C[i] << std::endl;
                     }
 
-                    if  ( (c == targetC[iC])&& (c == BLACK) )  {Pb+=wfoo(d[i]);count++;}
-                    if  ( (c == targetC[iC])&& (c == ORANGE))  {Pb+=wfoo(d[i]);count++;}
-                    if  ( (c == targetC[iC])&& (c == WHITE) )  {Pb+=wfoo(d[i]);count++;}
-                    if  ( (c == targetC[iC])&& (c == YELLOW))  {Pb+=wfoo(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == BLACK) )  {Pb+=wfooD(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == ORANGE))  {Pb+=wfooD(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == WHITE) )  {Pb+=wfooA(d[i]);count++;}
+                    if  ( (c == targetC[iC])&& (c == YELLOW))  {Pb+=wfooA(d[i]);count++;}
                     }
             }
         }

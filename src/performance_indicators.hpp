@@ -425,7 +425,9 @@ inline void all_perfomance_indicators_5phases(
                                               const edge_colors_t& L,
                                               const vertex_ccs_t& vCC,
                                               const ccs_t& CC,
-                                              double pixelsize) {
+                                              double pixelsize,
+                                              double LdD, double LdA
+                                              ) {
     
     
     //*****************************************************************//
@@ -443,35 +445,35 @@ inline void all_perfomance_indicators_5phases(
     //*****************************************************************//
     // Exciton dissociation morphology descriptors:                        //
     //*****************************************************************//
-    double Ld = 10.0;
+//    double Ld = 10.0;
 //    std::pair<double,double> F_DISS = wf_diss(G,d_g,C,W,vCC,CC,Ld,BLACK,GREEN);
 //    std::pair<double,double> F_DISS_cr = wf_diss(G,d_g,C,W,vCC,CC,Ld,ORANGE,PURPLE);
     
     std::string filename = std::string("DistancesBlackToGreen.txt");
     std::string wfilename = std::string("WDistancesBlackToGreen.txt");
-    std::pair<double,double> F_DISS = wf_diss(G,d_g,C,W,vCC,CC,Ld,filename,wfilename,BLACK,GREEN);
+    std::pair<double,double> F_DISS = wf_diss(G,d_g,C,W,vCC,CC,LdD,filename,wfilename,BLACK,GREEN);
     descriptors.update_desc("DISS_wf10_D",F_DISS.first);
     descriptors.update_desc("DISS_f10_D",F_DISS.second);
 
 
-    Ld=10;
+//    Ld=10;
     filename = std::string("DistancesOrangeToPurple.txt");
     wfilename = std::string("WDistancesOrangeToPurple.txt");
-    std::pair<double,double> F_DISS_cr = wf_diss(G,d_g,C,W,vCC,CC,Ld,filename,wfilename,ORANGE,PURPLE);
+    std::pair<double,double> F_DISS_cr = wf_diss(G,d_g,C,W,vCC,CC,LdD,filename,wfilename,ORANGE,PURPLE);
     descriptors.update_desc("DISS_wf_Dcr",F_DISS_cr.first);
     descriptors.update_desc("DISS_f_Dcr",F_DISS_cr.second);
 
-    Ld=10;
+//    Ld=10;
     filename = std::string("DistancesWhiteToGreen.txt");
     wfilename = std::string("WDistancesWhiteToGreen.txt");
-    F_DISS = wf_diss(G,d_g,C,W,vCC,CC,Ld,filename,wfilename,WHITE,GREEN);
+    F_DISS = wf_diss(G,d_g,C,W,vCC,CC,LdA,filename,wfilename,WHITE,GREEN);
     descriptors.update_desc("DISS_wf_A",F_DISS.first);
     descriptors.update_desc("DISS_f_A",F_DISS.second);
 
-    Ld=10;
+//    Ld=10;
     filename = std::string("DistancesYellowToPurple.txt");
     wfilename = std::string("WDistancesYellowToPurple.txt");
-    F_DISS_cr = wf_diss(G,d_g,C,W,vCC,CC,Ld,filename,wfilename,YELLOW,PURPLE);
+    F_DISS_cr = wf_diss(G,d_g,C,W,vCC,CC,LdA,filename,wfilename,YELLOW,PURPLE);
     descriptors.update_desc("DISS_wf_Acr",F_DISS_cr.first);
     descriptors.update_desc("DISS_f_Acr",F_DISS_cr.second);
 
@@ -489,7 +491,8 @@ inline void all_perfomance_indicators_5phases(
     colorsForEffectiveHoleTransportPaths.push_back(GREY);
     compute_shortest_distance_from_multipleSourceC_to_targetC(RED,colorsForEffectiveHoleTransportPaths,
                                                       G, d_g, C, W,
-                                                      distances, filename);
+                                                      distances,
+                                                      filename);
 //    filename = res_path + std::string("DistancesGreenToRedViaBlack.txt");
 //    print_distances_of_ids(distances,id_blacks_conn_green_red,
 //                           filename);
@@ -529,6 +532,7 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
                                                          const vertex_ccs_t& vCC,
                                                          const ccs_t& CC,
                                                          double pixelsize,
+                                                         double LdD, double LdA,
                                                          graspi::DESC& descriptors){
     
 #ifdef DEBUG
@@ -556,7 +560,7 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
     colorsForEffectiveHoleTransportPaths.push_back(GREY);
     std::pair<double,int>Pc=compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveHoleTransportPaths,
                                                       G, d_g, d_a, C, W,
-                                                      distances, filename);
+                                                      distances, LdD, LdA, filename);
     descriptors.update_desc("Pc",Pc.first);
 
     // repeat three above steps for distanced from any grey to red
@@ -568,7 +572,7 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
     colorsForEffectiveEleTransportPaths.push_back(GREY);
     std::pair<double,int> Pb=compute_shortest_distance_from_multipleSourceC_to_GREEN(colorsForEffectiveEleTransportPaths,
                                                       G, d_g, d_a, C, W,
-                                                      distances, filename);
+                                                      distances,LdD, LdA, filename);
     descriptors.update_desc("Pb",Pb.first);
     std::cout << "Pb:" << Pb.first << std::endl;
     std::cout << "Pc:" << Pc.first << std::endl;

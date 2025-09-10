@@ -32,7 +32,17 @@ namespace graspi {
             return A1*exp(-((d-B1)/C1)*((d-B1)/C1));
         }
     };
-    
+   
+    struct foo_w_dissLd{
+        double Ld;
+        foo_w_dissLd(){ Ld=10; }
+        foo_w_dissLd(double ld){ Ld=ld;}
+    double operator()(double d)const{
+        return exp(-(d/Ld));
+    }
+};
+
+
     inline int
     identify_n_vertices_within_distance( const std::vector<float>& d,
                                         double Ld){
@@ -98,7 +108,7 @@ namespace graspi {
         
         determine_shortest_distances( G, W, int_id, pred, d);
         
-        foo_w_diss wfoo;
+        foo_w_dissLd wfoo(Ld);
         std::ostringstream oss_out_d;
         std::ostringstream oss_out_wd;
         for (unsigned int i = 0; i < d.size(); i++) {
@@ -163,7 +173,7 @@ namespace graspi {
         
         determine_shortest_distances( G, W, int_id, pred, d);
         
-        foo_w_diss wfoo;
+        foo_w_dissLd wfoo(Ld);
         for (unsigned int i = 0; i < d.size(); i++) {
             unsigned int c = C[i];
             if (c == color) n_color++;
