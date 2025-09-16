@@ -43,6 +43,8 @@ int main(int argc, char** argv){
     int infile_flag = -1;    // format 0=array, 1-graph
     std::string infile_name; //filename to read data from
     double pixelsize = 1.0;
+    double LdD = 10;          // exciton diffusion length of donor
+    double LdA = 10;          // exciton diffusion length of acceptor
     bool if_per = 0;         // if periodic BC (0-false, 1-true)
     int n_of_phases = 5;    // number of phases (default 2)
     std::string res_path("./");
@@ -69,6 +71,12 @@ int main(int argc, char** argv){
         }else if (param == std::string("-r")) {
             res_path = argv[i + 1];
             i++;
+        }else if (param == std::string("-ldD")) {
+            LdD = atof(argv[i + 1]);
+            i++;
+        }else if (param == std::string("-ldA")) {
+            LdA = atof(argv[i + 1]);
+            i++;
         }
     }
     std::string log_filename = res_path + std::string("graspi.log");
@@ -83,7 +91,9 @@ int main(int argc, char** argv){
     << " pixelsize:" << pixelsize << std::endl
     << " if_per:" << if_per << std::endl
     << " n_of_phases:" << n_of_phases << std::endl
-    << " res_path" << res_path << std::endl;
+    << " res_path:" << res_path << std::endl
+    << " LdD:" << LdD << std::endl
+    << " LdA:" << LdA << std::endl;
     std::cout << "-------------------------------------------" << std::endl;
 #endif
     
@@ -99,6 +109,8 @@ int main(int argc, char** argv){
         << "-p <{0,1}> (default 0-false) "
         << "-n <{2,3,5}> (default 2-{D,A}) "
         << "-r path where store results (default ./) "
+        << "-ldD <excitonicLengthDonor> (default 10) "
+        << "-ldA <excitonicLengthAcceptor> (default 10) "
         << std::endl << std::endl;
         return 0;
     }
@@ -241,12 +253,12 @@ int main(int argc, char** argv){
 //                                          G, d_g,
 //                                          vertex_colors, d_a, edge_weights, edge_colors,
 //                                          vertex_ccs, ccs,
-//                                          pixelsize);
+//                                          pixelsize, LdD, LdA);
         distancesForEffectiveChargeTransport_5phases(
                                           G,d_g,
                                           vertex_colors, d_a, edge_weights, edge_colors,
                                           vertex_ccs, ccs,
-                                                     pixelsize,descriptors);
+                                                     pixelsize, LdD, LdA, descriptors);
     }
 
     timer.check("ALL performance indicators computed");
