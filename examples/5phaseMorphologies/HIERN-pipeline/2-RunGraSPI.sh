@@ -23,7 +23,7 @@ for i in Morph*MorphoDesc.txt; do
     BASEFILENAME=`echo ${i} | sed 's/.txt//'` #remove txt-file extension
     echo ""
     echo "analyzing file $FILENAME"
-    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -LdD 10 -LdA 10 > $DESCS/descriptors.$BASEFILENAME.log
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD 10 -ldA 10 > $DESCS/descriptors.$BASEFILENAME.log
 
     for j in *Distances*.txt; do
         cp $j $DISTANCES/${BASEFILENAME}-${j}
