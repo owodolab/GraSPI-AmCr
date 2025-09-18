@@ -54,10 +54,10 @@ Data=[];
     values=[values;Data(index-1,:)];
 %     Interface=[Interface;InterfacePre(index-1,:)];
     descriptornames={'MUeG','MUhG','KrG','ETAdG'};
-%     LimPhiSolv_FilmMean=PostParam.LimPhiSolv_FilmMean;
-%     LimPhiAir_Film=PostParam.LimPhiAir_Film ;
-%     PercoThresHoles=PostParam.PercoThresHoles;
-%     PercoThresElec=PostParam.PercoThresElec ;
+    LimPhiSolv_FilmMean=PostParam.LimPhiSolv_FilmMean;
+    LimPhiAir_Film=PostParam.LimPhiAir_Film ;
+    PercoThresHoles=PostParam.PercoThresHoles;
+    PercoThresElec=PostParam.PercoThresElec ;
 %     
 %        DataLabels = [1,2,3,4,5,6,7,8,9,10,11,12,13] ;
 %        figure; set(gca,'FontSize',18);

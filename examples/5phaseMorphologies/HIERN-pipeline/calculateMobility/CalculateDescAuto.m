@@ -109,6 +109,7 @@ customEET = [1 1 1;    % 0- White
    
     EET=importdata(filenameEET);
     EHT=importdata(filenameEHT);
+    pause(20)
     sizeEET=size(EET);
     sizeEHT=size(EHT);
     for i=1:sizeEET(1)

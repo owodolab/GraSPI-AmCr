@@ -12,6 +12,7 @@ echo "name MUeG MUhG krG ETA_dG $NAMEDESC "> $VIS/AllDescriptors.txt
 
 for i in $DESCS/*.log; do
     filename=$i
+    #filenameWOext=`echo $i | cut -d "." -f 2`
     filenameWOext=`echo $i | cut -d "." -f 3`
     #filenameWOext="${i%.*}"
     echo "Processing: $filenameWOext"

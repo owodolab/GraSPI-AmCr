@@ -58,6 +58,10 @@ customEET = [1 1 1;    % 0- White
     EHT=importdata(filenameEHT);
     sizeEET=size(EET);
     sizeEHT=size(EHT);
+%%% I added this for size consistency
+MorphEET=zeros(sizeMorph);
+MorphEHT=zeros(sizeMorph);
+
     for i=1:sizeEET(1)
         x=EET(i,1);
         y=EET(i,2);
