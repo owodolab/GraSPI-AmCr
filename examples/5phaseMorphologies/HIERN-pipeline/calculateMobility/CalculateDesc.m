@@ -2,6 +2,10 @@ clear;
 
 myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
 % myFiles = dir('MorphBilayerTest.txt'); %gets all mat files in struct
+% myFiles = dir('MorphBilayerTest2.txt'); %gets all mat files in struct
+%     myFiles = dir('BigBox.txt'); %gets all mat files in struct
+% myFiles = dir('descMob-MorphParamSet32Fields_sv46_MorphoDesc.txt'); %gets all mat files in struct
+
 
 nMorph = length(myFiles);
 
@@ -50,42 +54,43 @@ for fileId = 1:length(myFiles)
     % ORYA code: Preparation of neighbors for CCL and of point to point distances
     % -----------------------------------------------------------------------
     
-    % Il faut avoir la taille des images nxyz
-    nxyz = [sizeMorph(2) sizeMorph(1) 1]; 
-    dxyz = [1 1 1];
-
-    % Define bondary conditions
-    FlagBC = [0 1 1]; 
-
-    % Choose connectivity
-    Connectivity = 'extended';
-
-    % Needed for CCL (do not touch)
-    Nnodes = prod(nxyz); Ndim = numel(find(nxyz>1));
-    [ AllShiftDirs ] = Mesh_AllShiftDirs( nxyz );
-    Nblocs=[1 1 1]; Ncpu=prod(Nblocs);
-    [ Core_Carto, StartStopInd_percpu ] = DomainDecompo_MappingsGlobal( nxyz, Ncpu, Nblocs );
-     Halosize = 2; ProcNum = 1;
-    [ NoAllNeighboursCore_PerShiftDir ] = DomainDecompo_Neighbours_OfWorker( Core_Carto, AllShiftDirs, Nblocs, FlagBC, ProcNum);
-    [ LocalOwnedNodes_GlobalCarto, AllNodes_GlobalCarto_ord, HaloNodes_GlobalCarto_ord, MyHaloNodes_NoWorkers, IndLoc_Halo1, IndLoc_Halo2 ] = DomainDecompo_MappingsPerWorker( ProcNum, nxyz, FlagBC, Ncpu, Nblocs, Halosize, StartStopInd_percpu );
-    [ NEI.NoNeighb ] = Mesh_NoNeighbours( AllNodes_GlobalCarto_ord, AllShiftDirs, nxyz, FlagBC );
-    NEI.NNeighb = size(NEI.NoNeighb,2);
-
-    [ MeshCoord ] = MeshCoordinate ( nxyz, dxyz );
-    MeshCoord = MeshCoord + 0.5;
-    DeltaX = zeros(nxyz(1),nxyz(1)); % distances x taking into account BC along x direction
-    for ix = 1:nxyz(1)
-        PointCoord = [ix 1 1];
-        [ PointMeshCoordXYZ ] = MeshClosestCoordToPoint(nxyz, dxyz, MeshCoord, PointCoord, FlagBC);
-        IndUseful = find(PointMeshCoordXYZ(:,2)==1);
-        DeltaX(ix,:) = PointMeshCoordXYZ(IndUseful,1);
-    end
-
+%     % Il faut avoir la taille des images nxyz
+%     nxyz = [sizeMorph(2) sizeMorph(1) 1]; 
+%     dxyz = [1 1 1];
+% 
+%     % Define boundary conditions
+%     FlagBC = [0 1 1]; 
+% 
+%     % Choose connectivity
+%     Connectivity = 'extended';
+% 
+%     % Needed for CCL (do not touch)
+%     Nnodes = prod(nxyz); Ndim = numel(find(nxyz>1));
+%     [ AllShiftDirs ] = Mesh_AllShiftDirs( nxyz );
+%     Nblocs=[1 1 1]; Ncpu=prod(Nblocs);
+%     [ Core_Carto, StartStopInd_percpu ] = DomainDecompo_MappingsGlobal( nxyz, Ncpu, Nblocs );
+%      Halosize = 2; ProcNum = 1;
+%     [ NoAllNeighboursCore_PerShiftDir ] = DomainDecompo_Neighbours_OfWorker( Core_Carto, AllShiftDirs, Nblocs, FlagBC, ProcNum);
+%     [ LocalOwnedNodes_GlobalCarto, AllNodes_GlobalCarto_ord, HaloNodes_GlobalCarto_ord, MyHaloNodes_NoWorkers, IndLoc_Halo1, IndLoc_Halo2 ] = DomainDecompo_MappingsPerWorker( ProcNum, nxyz, FlagBC, Ncpu, Nblocs, Halosize, StartStopInd_percpu );
+%     [ NEI.NoNeighb ] = Mesh_NoNeighbours( AllNodes_GlobalCarto_ord, AllShiftDirs, nxyz, FlagBC );
+%     NEI.NNeighb = size(NEI.NoNeighb,2);
+% 
+%     [ MeshCoord ] = MeshCoordinate ( nxyz, dxyz );
+%     MeshCoord = MeshCoord + 0.5;
+%     DeltaX = zeros(nxyz(1),nxyz(1)); % distances x taking into account BC along x direction
+%     for ix = 1:nxyz(1)
+%         PointCoord = [ix 1 1];
+%         [ PointMeshCoordXYZ ] = MeshClosestCoordToPoint(nxyz, dxyz, MeshCoord, PointCoord, FlagBC);
+%         IndUseful = find(PointMeshCoordXYZ(:,2)==1);
+%         DeltaX(ix,:) = PointMeshCoordXYZ(IndUseful,1);
+%     end
+    
+    k_pen_A2C = 1; % penalty prefactor on mobility when travelling from amorphous to crystalline
     Weights = [0.1 0.1 1]; % [0.1 0.1 1] for up and down 
     MorphoTypesD = [0 3 5]; % [0 3 5] for up (donor), [1 3 7] for down, 
     MorphoTypesA = [1 3 7]; % [0 3 5] for up (acceptor), [1 3 7] for down, 
-    SourceTargetPlanesUp = [1 2]; % Number of source and target planes; [1 2] for up, [2,1] for down
-    SourceTargetPlanesDown = [2 1]; % Number of source and target planes; [1 2] for up, [2,1] for down   
+%     SourceTargetPlanesUp = [1 2]; % Number of source and target planes; [1 2] for up, [2,1] for down
+%     SourceTargetPlanesDown = [2 1]; % Number of source and target planes; [1 2] for up, [2,1] for down   
 
     % -----------------------------------------------------------------------
     % Back to Olga's code
@@ -154,52 +159,177 @@ for fileId = 1:length(myFiles)
     HEffdepMobEHT=zeros(sizeMorph(1),1);
     HEffdepMobEET=zeros(sizeMorph(1),1);
     
-    for iy=2:sizeMorph(1)-1
-        iy
-        
-        sumEffEH=0; itEffH=0;
-        sumEffEE=0; itEffE=0;
-        
-        for ix=1:sizeMorph(2)
-            
-            twoLayersUp=MorphEHT(iy:iy+1,:);
-            twoLayersDown=MorphEET(iy-1:iy,:);
-            currPhase=Morph(iy,ix);
-            
-            if ( (currPhase == 0 ) || (currPhase == 3 ) || (currPhase == 5 ))
-                % locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
-                locMuH = ComputeLocMuH_ORYA(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesD,Weights,SourceTargetPlanesUp);
-                if(MorphEHT(iy,ix)==1)
-                    sumEffEH=sumEffEH+locMuH;
-                    itEffH=itEffH+1;
-                    MobEHT(iy,ix)=locMuH;
-                end
-            end
-            
-            if ( (currPhase == 1 ) || (currPhase == 3 ) || (currPhase == 7 ))
-                % locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
-                locMuE=ComputeLocMuH_ORYA(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesA,Weights,SourceTargetPlanesDown);
-                if (MorphEET(iy,ix) == 1)
-                    sumEffEE=sumEffEE+locMuE;
-                    itEffE=itEffE+1;
-                    MobEET(iy,ix)=locMuE;
-                end
-            end
-            
-        end
-        
-        HdepMobEHT(iy)=mean(MobEHT(iy,:));
-        HdepMobEET(iy)=mean(MobEET(iy,:));
-        if(itEffH ~= 0)
-            HEffdepMobEHT(iy)=sumEffEH/itEffH;
-        end
-        if(itEffE ~=0)
-            HEffdepMobEET(iy)=sumEffEE/itEffE;
-        end
-        %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEHT(iy), sumEffEH, itEffH, HEffdepMobEHT(iy) );
-        %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEET(iy), sumEffEE, itEffE, HEffdepMobEET(iy) );
-        
-    end
+    % Calculate w_h*phi^2 everywhere ---------------------------------------------------
+    
+    whphi2_EHT = zeros(size(Morph));
+    whphi2_EET = zeros(size(Morph));
+
+    IndMixed = find(Morph==3);
+    
+    % Fill with wh
+    whphi2_EHT(IndMixed) = Weights(2);
+    IndDam = find(Morph==0);
+    whphi2_EHT(IndDam) = Weights(1);
+    IndDcr = find(Morph==5);
+    whphi2_EHT(IndDcr) = Weights(3);
+    
+    % Multiply by phi^2
+    whphi2_EHT = whphi2_EHT.*phiDMorph.^2;
+    
+    % Set to zero outside EHT
+    IndEHT = find(MorphEHT==1);
+    IndnotEHT = find(MorphEHT~=1);
+    whphi2_EHT(IndnotEHT) = 0;
+
+    % Fill with wh
+    whphi2_EET(IndMixed) = Weights(2);
+    IndAam = find(Morph==1);
+    whphi2_EET(IndAam) = Weights(1);
+    IndAcr = find(Morph==7);
+    whphi2_EET(IndAcr) = Weights(3);
+    
+    % Multiply by phi^2
+    whphi2_EET = whphi2_EET.*phiAMorph.^2;
+
+    % Set to zero outside EET
+    IndEET = find(MorphEET==1);
+    IndnotEET = find(MorphEET~=1);
+    whphi2_EET(IndnotEET) = 0;
+
+    % Crystallinity indicator
+    IndicCr_EHT = zeros(size(Morph));
+    IndicCr_EET = zeros(size(Morph));
+    IndicCr_EHT(IndDcr) = 1;
+    IndicCr_EET(IndAcr) = 1;
+    
+    % Calculate mobility in HTP ---------------------------------------
+
+    % Calculate mobility for direct neighbour, holes, transport in direction of increasing row subscripts
+    % then circshift along dim 1, negative shift
+    whphi2_EHT_Neighb1 = circshift(whphi2_EHT,-1,1);
+    IndicCr_EHT_Neighb1 = circshift(IndicCr_EHT,-1,1);
+    PhaseSwitch = IndicCr_EHT_Neighb1-IndicCr_EHT;
+    IndPhaseSwitch = find(IndicCr_EHT_Neighb1-IndicCr_EHT==1);
+    whphi2_EHT_Neighb1(IndPhaseSwitch) = k_pen_A2C*whphi2_EHT_Neighb1(IndPhaseSwitch);
+    % Now mobility for neighbour left
+    whphi2_EHT_Neighb2 = circshift(whphi2_EHT_Neighb1,1,2)*cos(-pi/4);
+    IndicCr_EHT_Neighb2 = circshift(IndicCr_EHT_Neighb1,1,2);
+    PhaseSwitch = IndicCr_EHT_Neighb2-IndicCr_EHT;
+    IndPhaseSwitch = find(IndicCr_EHT_Neighb2-IndicCr_EHT==1);
+    whphi2_EHT_Neighb2(IndPhaseSwitch) = k_pen_A2C*whphi2_EHT_Neighb2(IndPhaseSwitch);
+    % Now mobility for neighbour right
+    whphi2_EHT_Neighb3 = circshift(whphi2_EHT_Neighb1,-1,2)*cos(pi/4);
+    IndicCr_EHT_Neighb3 = circshift(IndicCr_EHT_Neighb1,-1,2);
+    PhaseSwitch = IndicCr_EHT_Neighb3-IndicCr_EHT;
+    IndPhaseSwitch = find(IndicCr_EHT_Neighb3-IndicCr_EHT==1);
+    whphi2_EHT_Neighb3(IndPhaseSwitch) = k_pen_A2C*whphi2_EHT_Neighb3(IndPhaseSwitch);
+    % Take the max
+    whphi2_EHT_AllNeighb = max(whphi2_EHT_Neighb1,whphi2_EHT_Neighb2);
+    whphi2_EHT_AllNeighb = max(whphi2_EHT_AllNeighb,whphi2_EHT_Neighb3);
+    % Remove last line
+    whphi2_EHT_AllNeighb(sizeMorph(1),:) = 0;
+    % Fill only in EHT
+    MobEHT(IndEHT) = whphi2_EHT_AllNeighb(IndEHT);
+    % Average per line
+    HdepMobEHT = mean(MobEHT,2);
+    Matdum = zeros(size(Morph));
+    Matdum(IndEHT) = 1;
+    nnzperline = sum(Matdum,2);
+    HEffdepMobEHT = sum(MobEHT,2)/nnzperline;
+    
+    % Calculate mobility in ETP ---------------------------------------
+    
+    % Calculate mobility for direct neighbour, holes, transport in direction of decreasing row subscripts
+    % then circshift along dim 1, positive shift
+    whphi2_EET_Neighb1 = circshift(whphi2_EET,1,1);
+    IndicCr_EET_Neighb1 = circshift(IndicCr_EET,-1,1);
+    PhaseSwitch = IndicCr_EET_Neighb1-IndicCr_EET;
+    IndPhaseSwitch = find(IndicCr_EET_Neighb1-IndicCr_EET==1);
+    whphi2_EET_Neighb1(IndPhaseSwitch) = k_pen_A2C*whphi2_EET_Neighb1(IndPhaseSwitch);
+    % Now mobility for neighbour left
+    whphi2_EET_Neighb2 = circshift(whphi2_EET_Neighb1,1,2)*cos(-pi/4);
+    IndicCr_EET_Neighb2 = circshift(IndicCr_EET_Neighb1,-1,1);
+    PhaseSwitch = IndicCr_EET_Neighb2-IndicCr_EET;
+    IndPhaseSwitch = find(IndicCr_EET_Neighb2-IndicCr_EET==1);
+    whphi2_EET_Neighb2(IndPhaseSwitch) = k_pen_A2C*whphi2_EET_Neighb2(IndPhaseSwitch);
+    % Now mobility for neighbour right
+    whphi2_EET_Neighb3 = circshift(whphi2_EET_Neighb1,-1,2)*cos(pi/4);
+    IndicCr_EET_Neighb3 = circshift(IndicCr_EET_Neighb1,-1,1);
+    PhaseSwitch = IndicCr_EET_Neighb3-IndicCr_EET;
+    IndPhaseSwitch = find(IndicCr_EET_Neighb3-IndicCr_EET==1);
+    whphi2_EET_Neighb3(IndPhaseSwitch) = k_pen_A2C*whphi2_EET_Neighb3(IndPhaseSwitch);
+    % Take the max
+    whphi2_EET_AllNeighb = max(whphi2_EET_Neighb1,whphi2_EET_Neighb2);
+    whphi2_EET_AllNeighb = max(whphi2_EET_AllNeighb,whphi2_EET_Neighb3);
+    % Remove first line
+    whphi2_EET_AllNeighb(1,:) = 0;
+    % Fill only in EET
+    MobEET(IndEET) = whphi2_EET_AllNeighb(IndEET);
+    % Average per line
+    HdepMobEET = mean(MobEET,2);
+    Matdum = zeros(size(Morph));
+    Matdum(IndEET) = 1;
+    nnzperline = sum(Matdum,2);
+    HEffdepMobEET = sum(MobEET,2)/nnzperline;
+
+    
+%     for iy=2:sizeMorph(1)-1
+%         iy
+%         
+%         sumEffEH=0; itEffH=0;
+%         sumEffEE=0; itEffE=0;
+%         
+%         for ix=1:sizeMorph(2)
+%             
+% %             twoLayersUp=MorphEHT(iy:iy+1,:);
+% %             twoLayersDown=MorphEET(iy-1:iy,:);
+%             if ix==1
+%                 twoLayersUp=MorphEHT(iy:iy+1,[sizeMorph(2) ix ix+1]);
+%                 twoLayersDown=MorphEET(iy-1:iy,[sizeMorph(2) ix ix+1]);
+% 
+%             elseif ix==sizeMorph(2)
+%                 twoLayersUp=MorphEHT(iy:iy+1,[ix-1 ix 1]);
+%                 twoLayersDown=MorphEET(iy-1:iy,[ix-1 ix 1]);
+%             else
+%                 twoLayersUp=MorphEHT(iy:iy+1,ix-1:ix+1);
+%                 twoLayersDown=MorphEET(iy-1:iy,ix-1:ix+1);
+%             end    
+% 
+%             currPhase=Morph(iy,ix);
+%             if ( (currPhase == 0 ) || (currPhase == 3 ) || (currPhase == 5 ))
+%                 % locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
+%                 locMuH = ComputeLocMuH_ORYA(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesD,Weights,SourceTargetPlanesUp);
+%                 if(MorphEHT(iy,ix)==1)
+%                     sumEffEH=sumEffEH+locMuH;
+%                     itEffH=itEffH+1;
+%                     MobEHT(iy,ix)=locMuH;
+%                 end
+%             end
+%             
+%             if ( (currPhase == 1 ) || (currPhase == 3 ) || (currPhase == 7 ))
+%                 % locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
+%                 locMuE=ComputeLocMuH_ORYA(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesA,Weights,SourceTargetPlanesDown);
+%                 if (MorphEET(iy,ix) == 1)
+%                     sumEffEE=sumEffEE+locMuE;
+%                     itEffE=itEffE+1;
+%                     MobEET(iy,ix)=locMuE;
+%                 end
+%             end
+%             
+%         end
+%         
+%         HdepMobEHT(iy)=mean(MobEHT(iy,:));
+%         HdepMobEET(iy)=mean(MobEET(iy,:));
+%         if(itEffH ~= 0)
+%             HEffdepMobEHT(iy)=sumEffEH/itEffH;
+%         end
+%         if(itEffE ~=0)
+%             HEffdepMobEET(iy)=sumEffEE/itEffE;
+%         end
+%         %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEHT(iy), sumEffEH, itEffH, HEffdepMobEHT(iy) );
+%         %        fprintf('Avg: %f sum: %f, it: %d, effAvg: %f\n', HdepMobEET(iy), sumEffEE, itEffE, HEffdepMobEET(iy) );
+%         
+%     end
     
     figure;
     imagesc(MobEHT);
