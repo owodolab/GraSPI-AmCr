@@ -485,7 +485,10 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
                     if ( (c == targetC[iC]) && (c != GREY)){
                         int idx = i / d_a.nx;
                         int idy = i % d_a.nx;
-                        oss_out << idy << " " << idx << " "  << d[i] << " " << C[i] << std::endl;
+                        oss_out << idy << " " << idx << " "  << d[i] << " " << C[i] << " ";
+                        if ( (c == BLACK) || (c == ORANGE) ) oss_out << wfooD(d[i]);
+                        if ( (c == WHITE) || (c == YELLOW) ) oss_out << wfooA(d[i]);
+                        oss_out << std::endl;
                     }
 
                     if  ( (c == targetC[iC])&& (c == BLACK) )  {Pb+=wfooD(d[i]);count++;}

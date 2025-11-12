@@ -97,6 +97,7 @@ namespace graspi {
             COLOR color = BLACK,
             COLOR green = GREEN
             ){
+                
         int n_color = 0;
         int n_color_Ld = 0;
         double wn_color_Ld = 0;

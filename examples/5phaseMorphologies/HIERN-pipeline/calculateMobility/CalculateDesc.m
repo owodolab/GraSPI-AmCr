@@ -24,7 +24,8 @@ customEET = [1 1 1;    % 0- White
              0 0 1];    % 1- Blue (bottom)
 
 
-for fileId = 1:length(myFiles)
+profile on        % Start profiling
+for fileId = 1:1%length(myFiles)
     filename = myFiles(fileId).name;
     filenameWOext = extractBefore(filename, ".");
 
@@ -150,48 +151,47 @@ for fileId = 1:length(myFiles)
     end
 
     
-    figure;
-    imagesc(MobEHT);
-    clim([0 1]);
-%    colormap(customMapDesc);
-    colorbar;
-    imageFilename=sprintf('%s-MobilityEHT.png', filenameWOext);
-    print(imageFilename,'-dpng');
+%    figure;
+%    imagesc(MobEHT);
+%    clim([0 1]);
+%    colorbar;
+%    imageFilename=sprintf('%s-MobilityEHT.png', filenameWOext);
+%    print(imageFilename,'-dpng');
 
 
-    figure;
-    imagesc(MobEET);
-    clim([0 1]);
-    colorbar;
-    imageFilename=sprintf('%s-MobilityEET.png', filenameWOext);
-    print(imageFilename,'-dpng');
+%    figure;
+%    imagesc(MobEET);
+%    clim([0 1]);
+%    colorbar;
+%    imageFilename=sprintf('%s-MobilityEET.png', filenameWOext);
+%    print(imageFilename,'-dpng');
 
     AvgMobEHT=mean(MobEHT,2);
     AvgMobEET=mean(MobEET,2);
 
     indexOfH=linspace(1,size(AvgMobEHT,1),size(AvgMobEHT,1));
 
-    figure; hold on;
-    xlabel("Avg Hole Mobility");
-    ylabel("Height");
-    xlim([0 1]);
-    plot(AvgMobEHT,indexOfH,'DisplayName','Av-gl');
-    plot(HdepMobEHT,indexOfH,'DisplayName','Av-H');
-    plot(HEffdepMobEHT,indexOfH,'DisplayName','Eff');
-    legend;
-    imageFilename=sprintf('%s-AvgMobilityEHT.png', filenameWOext);
-    print(imageFilename,'-dpng');
+%    figure; hold on;
+%    xlabel("Avg Hole Mobility");
+%    ylabel("Height");
+%    xlim([0 1]);
+%    plot(AvgMobEHT,indexOfH,'DisplayName','Av-gl');
+%    plot(HdepMobEHT,indexOfH,'DisplayName','Av-H');
+%    plot(HEffdepMobEHT,indexOfH,'DisplayName','Eff');
+%    legend;
+%    imageFilename=sprintf('%s-AvgMobilityEHT.png', filenameWOext);
+%    print(imageFilename,'-dpng');
 
-    figure; hold on;
-    xlabel("Avg Electron Mobility");
-    ylabel("Height");
-    xlim([0 1]);
-    plot(AvgMobEET,indexOfH,'DisplayName','Av-gl');
-    plot(HdepMobEET,indexOfH,'DisplayName','Av-H');
-    plot(HEffdepMobEET,indexOfH,'DisplayName','Eff');
-    legend;
-    imageFilename=sprintf('%s-AvgMobilityEET.png', filenameWOext);
-    print(imageFilename,'-dpng');
+%    figure; hold on;
+%    xlabel("Avg Electron Mobility");
+%    ylabel("Height");
+%    xlim([0 1]);
+%    plot(AvgMobEET,indexOfH,'DisplayName','Av-gl');
+%    plot(HdepMobEET,indexOfH,'DisplayName','Av-H');
+%    plot(HEffdepMobEET,indexOfH,'DisplayName','Eff');
+%    legend;
+%    imageFilename=sprintf('%s-AvgMobilityEET.png', filenameWOext);
+%    print(imageFilename,'-dpng');
 
     if all(HEffdepMobEHT(:) == 0)
         MobHDesc = 0.0;
@@ -221,3 +221,5 @@ for fileId = 1:length(myFiles)
     fclose(fileID);
 
 end
+
+profile viewer    % Open the Profiler GUI with results

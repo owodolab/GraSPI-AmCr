@@ -37,7 +37,8 @@ for i in $DESCS/*.log; do
 #   (Desc3a*1+DescPb+DescPc)/(Desc3a+DescNb+DescNc)
     denominator=$(echo "$nMeff + $Nb + $Nc" | bc -l)
     if (( $(echo "$denominator != 0" | bc -l) )); then
-        ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($nMeff + $Nb + $Nc)" | bc)
+#        ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($nMeff + $Nb + $Nc)" | bc)
+        ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($N)" | bc)
     else
         ETAdG=0;
     fi
