@@ -24,7 +24,9 @@ for i in $2; do
     BASEFILENAME=`echo ${i} | sed 's/.txt//'` #remove txt-file extension
     echo ""
     echo "analyzing file $FILENAME"
-    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 > $DESCS/descriptors.$BASEFILENAME.log
+    #$GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 > $DESCS/descriptors.$BASEFILENAME.log
+    #$GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD 15 -ldA 40 > $DESCS/descriptors.$BASEFILENAME.log
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD $3 -ldA $4 > $DESCS/descriptors.$BASEFILENAME.log
 
     cp ${BASEFILENAME}-phiA.txt $DISTANCES/
     cp ${BASEFILENAME}-phiD.txt $DISTANCES/

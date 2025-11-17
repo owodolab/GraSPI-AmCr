@@ -4,10 +4,10 @@
 
 %[name DESC_3a DESC_3b DESC_3c STAT_n] = csvimport('AllDescriptors.txt', 'columns', {'name', 'DESC_3a', 'DESC_3b', 'DESC_3c', 'STAT_n',});
 
-Data=readmatrix("AllDescriptors.txt",'NumHeaderLines',1);
+Data=readmatrix(ResultsSaveFile,'NumHeaderLines',1);
 
 
-fid = fopen('AllDescriptors.txt','r');
+fid = fopen(ResultsSaveFile,'r');
 t = textscan(fid,'%s','delimiter',' ');
 fclose(fid);
 
@@ -15,7 +15,7 @@ MorphNames=[];
 Data=[];
 % InterfacePre=[];
       % try to open the file
-      fid = fopen('AllDescriptors.txt','r');
+      fid = fopen(ResultsSaveFile,'r');
       if fid > 0
 
           % loop over each line until the end of file (eof) is reached
@@ -50,7 +50,7 @@ Data=[];
        % close the file
        fclose(fid);
        
-    index=find(MorphNames==['Morph' NameFileSave '_sv_'  num2str(TimeStepChoice(hhh))]);
+    index=find(MorphNames==['Morph' NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
     values=[values;Data(index-1,:)];
 %     Interface=[Interface;InterfacePre(index-1,:)];
     descriptornames={'MUeG','MUhG','KrG','ETAdG'};

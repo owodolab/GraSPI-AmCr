@@ -1,4 +1,5 @@
 
+
 %set(groot, 'DefaultFigureRenderer', 'painters');
 
 
@@ -115,29 +116,58 @@ MorphEHT=zeros(sizeMorph);
 
 
     krecDesc=0;
-    for ix=1:sizeMorph(1);
-        for iy=1:sizeMorph(2);
+    for ix=1:sizeMorph(1)
+        for iy=1:sizeMorph(2)
             if (MorphDesc3(ix,iy) ~=0)
                 CalcKrec(ix,iy)=phiAMorph(ix,iy)*phiDMorph(ix,iy);
                 krecDesc=krecDesc+CalcKrec(ix,iy);
             end
         end
     end
+    
 
-    
-    figure;
-    imagesc(CalcKrec(end:-1:1,:));
-%    caxis([0 1]);
-%    colormap(customMapDesc);
-    colorbar;
-    imageFilename=sprintf('%s-krec', filenameWOext);
-    
-    print([NameWorkflowSave imageFilename],'-dpng');
-    savefig([NameWorkflowSave imageFilename '.fig'])
     
     filenameDesc=sprintf('descKrec-%s',filename);
     fileID = fopen(filenameDesc, 'w');
     fprintf(fileID, '%f\n', 4*krecDesc/countN2);
     fclose(fileID);
+    
+
+    
+    figure;
+%     imagesc(CalcKrec(end:-1:1,:));
+%    caxis([0 1]);
+%    colormap(customMapDesc);
+     colormap([[1 1 1];jet(100)]);
+    CalcKrecFinal=4*CalcKrec;
+    IndCRETP=find(MorphDesc3==0);
+    IndEHT = find(MorphEHT==1);
+    IndEET = find(MorphEET==1);
+    krecDescPlot=-1*ones(size(CalcKrecFinal));
+    krecDescPlot(IndEHT)=CalcKrecFinal(IndEHT);
+    krecDescPlot(IndEET)=CalcKrecFinal(IndEET);
+%     krecDescPlot=CalcKrecFinal;
+%     krecDescPlot(IndCRETP)=-1;
+    Zpad = [krecDescPlot; krecDescPlot(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(krecDescPlot);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+    view(90,270)
+    axis equal tight
+    caxis([-0.01 1]);
+    xlabel('z [nm]')
+    ylabel('x [nm]')
+    colorbar;
+    imageFilename=sprintf('_7%s_krec', filenameWOext);
+    
+    print([NameWorkflowSave imageFilename],'-dpng');
+    savefig([NameWorkflowSave imageFilename '.fig'])
+    
+    
+    
     pause(1)
     close all;
+    save([NameWorkflowSave 'Recomb.mat'],'CalcKrecFinal')

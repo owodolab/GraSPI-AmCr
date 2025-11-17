@@ -8,9 +8,9 @@ VIS="$MAINDIR/visualizeData"
 MOB="$MAINDIR/calculateMobility"
 NAMEDESC=`cut -d':' -f1 descriptors/descriptors.MorphFields_sv99_MorphoDesc.log | paste -sd ' ' - `
 
-echo "name MUeG MUhG krG ETA_dG $NAMEDESC "> $VIS/AllDescriptors.txt
+#echo "name MUeG MUhG krG ETA_dG $NAMEDESC "> $VIS/AllDescriptors.txt
 
-for i in $DESCS/*.log; do
+for i in $DESCS/*$1.log; do
     filename=$i
     #filenameWOext=`echo $i | cut -d "." -f 2`
     filenameWOext=`echo $i | cut -d "." -f 3`
@@ -57,7 +57,8 @@ for i in $DESCS/*.log; do
     echo "MUhG: $MUhG"
     echo "MUeG: $MUeG"
     echo "ETAdG: $ETAdG"
-     echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $VIS/AllDescriptors.txt
+    #echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $VIS/AllDescriptors.txt
+    echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $2
 
 done
 

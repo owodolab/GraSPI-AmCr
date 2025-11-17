@@ -17,10 +17,10 @@ customMapDesc = [0 0 0;    % 0- Black
                  1 1 0];   % 3- Yellow
 
 customEHT = [1 1 1;    % 0- White
-             1 0 0];    % 1- Red (top)
+            255/255 197/255 203/255];    % 1- Red (top)
 
 customEET = [1 1 1;    % 0- White
-             0 0 1];    % 1- Blue (bottom)
+             0 141/255 171/255];    % 1- Blue (bottom)
 
     filename = inputFile;
     filenameWOext = extractBefore(filename, ".");
@@ -61,7 +61,8 @@ customEET = [1 1 1;    % 0- White
     DETmixed=importdata(filenameDescETmixed);
     if ~isempty(DETmixed) 
         sizeDETmixed=size(DETmixed);
-        for i=1:DETmixed(1)
+%         for i=1:DETmixed(1)
+         for i=1:sizeDETmixed(1) % Yasin: I corrected the above line by this one
             x=DETmixed(i,1);
             y=DETmixed(i,2);
             color=DETmixed(i,4);
@@ -112,34 +113,77 @@ customEET = [1 1 1;    % 0- White
             MorphEET(y+1,x+1)=1;
         end
     end 
+% Dissociation efficiency (Yasin)
+
+
 
     figure;
-    imagesc(MorphDesc(end:-1:1,:));
-    caxis([0 3]);
-    colormap(customMapDesc);
-    imageFilename=sprintf('%s-Desc.png', filenameWOext);
+%     hIm=imagesc(0.5:1:x+0.5,0.5:1:y-0.5,MorphDesc);
+    Zpad = [MorphDesc; MorphDesc(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(MorphDesc);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+    view(90,270)
+    axis equal tight
+%     caxis([0 3]);
+    caxis([0 1]);
+    xlabel('z [nm]')
+    ylabel('x [nm]')
+    myColors = [
+    1 1 1;         % 0 white
+    153/255 153/255 255/255      % non-zero purple
+    ];
+    colormap(myColors)
+%     colormap(customMapDesc);
+%     colorbar
+    imageFilename=sprintf('_1%s_DescCRETP.png', filenameWOext);
     print([NameWorkflowSave imageFilename],'-dpng');
-    savefig([NameWorkflowSave imageFilename '.fig'])
+    savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
     pause(1);
     
     figure;
-    imagesc(MorphEET(end:-1:1,:));
+    %     hIm=imagesc(MorphEET(end:-1:1,:));
+    Zpad = [MorphEET; MorphEET(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(MorphEET);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+    view(90,270)
+    axis equal tight
     caxis([0 1]);
+    xlabel('z [nm]')
+    ylabel('x [nm]')
     colormap(customEET);
-    imageFilename=sprintf('%s-EET.png', filenameWOext);
+    imageFilename=sprintf('_2%s_EET.png', filenameWOext);
     print([NameWorkflowSave imageFilename],'-dpng');
-    savefig([NameWorkflowSave imageFilename '.fig'])
+    savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
     
     pause(1);
 
     figure;
-    imagesc(MorphEHT(end:-1:1,:));
+    %     hIm=imagesc(MorphEHT(end:-1:1,:));
+    Zpad = [MorphEHT; MorphEHT(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(MorphEHT);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+    view(90,270)
+    axis equal tight
     caxis([0 1]);
+    xlabel('z [nm]')
+    ylabel('x [nm]')
     colormap(customEHT);
-    imageFilename=sprintf('%s-EHT.png', filenameWOext);
+    imageFilename=sprintf('_3%s_EHT.png', filenameWOext);
     print([NameWorkflowSave imageFilename],'-dpng');
-    savefig([NameWorkflowSave imageFilename '.fig'])
+    savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
     pause(1);
 
 
@@ -152,12 +196,25 @@ customEET = [1 1 1;    % 0- White
     end
     
     figure;
-    imagesc(DistHole(end:-1:1,:));
-%    caxis([0 3]);
-%    colormap(customMapDesc);
-    imageFilename=sprintf('%s-DistHol.png', filenameWOext);
+    %     hIm=imagesc(DistHole(end:-1:1,:));
+    Zpad = [DistHole; DistHole(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(DistHole);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+    view(90,270)
+    axis equal tight
+    caxis([0 20]);
+    %     colormap(customMapDesc);
+    xlabel('z [nm]')
+    ylabel('x [nm]')
+    colorbar
+    colormap(jet(21));
+    imageFilename=sprintf('_4%s_DistHol.png', filenameWOext);
     print([NameWorkflowSave imageFilename],'-dpng');
-    savefig([NameWorkflowSave imageFilename '.fig'])
+    savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
     pause(1);
 
 
@@ -171,14 +228,79 @@ customEET = [1 1 1;    % 0- White
         end
    end 
    
-%     figure;
-%     imagesc(DistElec);
-% %    clim([0 3]);
-% %    colormap(customMapDesc);
-%     imageFilename=sprintf('%s-DistElec.png', filenameWOext);
-%     print(imageFilename,'-dpng');
-% 
-% 
+   figure;
+   %    hIm=imagesc(DistElec);
+    Zpad = [DistElec; DistElec(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(DistElec);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+    surf(X,Y,Zpad','EdgeColor','none')
+   view(90,270)
+   axis equal tight
+   caxis([0 20]);
+   colorbar
+   %    colormap(customMapDesc);
+  colormap(jet(100));
+  xlabel('z [nm]')
+  ylabel('x [nm]')
+   imageFilename=sprintf('_5%s_DistElec.png', filenameWOext);
+   print([NameWorkflowSave imageFilename],'-dpng');
+   savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
+   pause(1);
+ 
+   
+   
+   
+   
+IndEETP=find(MorphEET==1);
+IndEHTP=find(MorphEHT==1);
+Induseful=find(MorphDesc~=0);
+
+DissoEfficiency =-1*ones(length(MorphEHT(:,1)),length(MorphEHT(1,:)));
+
+IndCRETP=find(MorphDesc==2); % finds the nodes in the Common region to effective transport phases (CRETP)
+% IndAcceptor=find((Morph == 1 ) | (Morph == 7 )); % finds the acceptor phase 
+% IndDonor=find((Morph == 1 ) | (Morph == 7 )); % finds the donor phase
+IndAcceptornoETP=find(((Morph == 1 ) | (Morph == 7 )) & (MorphEET==0)); %finds acceptor phase outside EETP (Electron effective transport phase)
+IndDonornoETP=find(((Morph == 0 ) | (Morph == 5 ) ) & (MorphEHT==0));  %finds donor phase outside EHTP (Hole  effective transport phase)
+IndmixednoETP=find(((Morph == 3 ) | (MorphEET == 0 ) ) & (MorphEHT==0)); % finds mixed phase outside both effective transport phases (EHTP and EETP)
+
+DissoEfficiency(IndEHTP)=exp(-DistHole(IndEHTP)/Ld(1));
+DissoEfficiency(IndEETP)=exp(-DistElec(IndEETP)/Ld(2));
+DissoEfficiency(IndCRETP)=1;
+
+DissoEfficiency(IndAcceptornoETP)=0;
+DissoEfficiency(IndDonornoETP)=0;
+DissoEfficiency(IndmixednoETP)=0;
+
+
+      figure;
+   %    hIm=imagesc(DistElec);
+    Zpad = [DissoEfficiency; DissoEfficiency(end,:)];         % Repeat last row
+    Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+    [a,b]=size(DissoEfficiency);
+    x = 0:a;   % 21 x-coordinates
+    y = 0:b;   % 11 y-coordinates
+    [X, Y] = meshgrid(x, y);
+   surf(X,Y,Zpad','EdgeColor','none');
+   view(90,270)
+   axis equal tight
+   caxis([-0.01 1]);
+   colorbar
+     %    colormap(customMapDesc);
+
+     
+   xlabel('z [nm]')
+   ylabel('x [nm]')
+   colormap([ [1 1 1]; jet(121)]);
+   imageFilename=sprintf('_6%s_DissoEfficiency.png', filenameWOext);
+
+   print([NameWorkflowSave imageFilename],'-dpng');
+   savefig([NameWorkflowSave  imageFilename(1:end-4) '.fig'])
+   pause(1);
+   %
 %      figure;
 %     imagesc(DistElec);
 % %    clim([0 3]);
@@ -200,6 +322,8 @@ customEET = [1 1 1;    % 0- White
 % %    colormap(customMapDesc);
 %     imageFilename=sprintf('%s-phiD.png', filenameWOext);
 %     print(imageFilename,'-dpng');
+   save([NameWorkflowSave 'FunctionalRegions.mat'], 'MorphDesc','MorphEET','MorphEHT')
+      save([NameWorkflowSave 'Disso.mat'],'DistHole','DistElec', 'DissoEfficiency')
 
-    close all;
+   close all;
 
