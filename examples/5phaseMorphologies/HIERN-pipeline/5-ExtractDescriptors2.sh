@@ -33,14 +33,15 @@ for i in $DESCS/*$1.log; do
     Nb=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
     target_key="Nc"
     Nc=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
-    target_key="N"
+    target_key="n"
     N=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
     
     
 #   (Desc3a*1+DescPb+DescPc)/(Desc3a+DescNb+DescNc)
     denominator=$(echo "$nMeff + $Nb + $Nc" | bc -l)
     if (( $(echo "$denominator != 0" | bc -l) )); then
-        ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($nMeff + $Nb + $Nc)" | bc)
+#        ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($nMeff + $Nb + $Nc)" | bc)
+       ETAdG=$(echo "scale=6; ($nMeff + $Pb + $Pc) / ($N)" | bc)
     else
         ETAdG=0;
     fi
@@ -52,7 +53,7 @@ for i in $DESCS/*$1.log; do
     MUeG=`cat $MOB/descMob-${filenameWOext}.txt | sed -n '/effMEle:/p' | sed -e "s/effMEle: //" `
     
     
-    
+    echo "N: $N"
     echo "KrG: $KrG"
     echo "MUhG: $MUhG"
     echo "MUeG: $MUeG"
