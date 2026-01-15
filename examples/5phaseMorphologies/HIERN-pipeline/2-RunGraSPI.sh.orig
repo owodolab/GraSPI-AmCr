@@ -1,0 +1,61 @@
+#!/bin/bash
+
+MAINDIR=$PWD
+
+PIXELSIZE=1
+
+GRASPI5Phases=/Users/olgawodo/MINE/PROJECTS/GraSPI/AmCrGraSPI/src/GRASPI5Phases
+#GRASPI5Phases=/data-er/y.ameslon/StructureAndPerformance/CloneTempGraSPI/GraSPI-AmCr/src/graspi5phases
+
+
+DATA="$MAINDIR/data"
+DISTANCES="$MAINDIR/distances"
+DESCS="$MAINDIR/descriptors"
+VISMORPH="$MAINDIR/visualMorph"
+
+cd $DATA
+
+f=0;
+for i in Morph*MorphoDesc.txt; do
+#for i in Morph*BilayerTest.txt; do
+    f=$(($f + 1))
+    FILENAME=$i
+    BASEFILENAME=`echo ${i} | sed 's/.txt//'` #remove txt-file extension
+    echo ""
+    echo "analyzing file $FILENAME"
+<<<<<<< HEAD
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -LdD 10 -LdA 10 > $DESCS/descriptors.$BASEFILENAME.log
+=======
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD 10 -ldA 10 > $DESCS/descriptors.$BASEFILENAME.log
+>>>>>>> bbc295b80 (updated script 2-RunGraspi to account for -ld switches)
+
+    for j in *Distances*.txt; do
+        cp $j $DISTANCES/${BASEFILENAME}-${j}
+        mv $j $VISMORPH/${BASEFILENAME}-${j}
+    done
+
+    cp ${BASEFILENAME}-phiA.txt $VISMORPH/
+    cp ${BASEFILENAME}-phiD.txt $VISMORPH/
+
+
+    cp ${BASEFILENAME}-phiA.txt $VISMORPH/
+    cp ${BASEFILENAME}-phiD.txt $VISMORPH/
+
+    cp $i $VISMORPH/
+    for j in *Ids*.txt; do
+        mv $j $VISMORPH/${BASEFILENAME}-${j}
+    done
+
+done
+
+cd $MAINDIR
+#!/bin/bash
+
+MAINDIR=$PWD
+
+
+
+
+
+
+
