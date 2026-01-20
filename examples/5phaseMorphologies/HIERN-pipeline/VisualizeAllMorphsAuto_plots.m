@@ -1,4 +1,4 @@
-function [ status ] = VisualizeAllMorphsAuto_plots( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc, MorphEET, MorphEHT, DistHole, DistElec, DissoEfficiency )
+function [ status ] = VisualizeAllMorphsAuto_plots( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc3, MorphEET, MorphEHT, DistHole, DistElec, DissoEfficiency )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -54,10 +54,10 @@ print([NameFolderGraspi 'visualMorph2/' imageFilename],'-dpng');
 % Sure about that???
 
 figure;
-%     hIm=imagesc(0.5:1:x+0.5,0.5:1:y-0.5,MorphDesc);
-Zpad = [MorphDesc; MorphDesc(end,:)];         % Repeat last row
+%     hIm=imagesc(0.5:1:x+0.5,0.5:1:y-0.5,MorphDesc3);
+Zpad = [MorphDesc3; MorphDesc3(end,:)];         % Repeat last row
 Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(MorphDesc);
+[a,b]=size(MorphDesc3);
 x = 0:a;   % 21 x-coordinates
 y = 0:b;   % 11 y-coordinates
 [X, Y] = meshgrid(x, y);

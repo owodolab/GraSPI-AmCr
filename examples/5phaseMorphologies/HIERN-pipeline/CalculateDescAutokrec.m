@@ -18,15 +18,15 @@ filenameDesc3c=[filenameWOext +'-IdsEHTdonor.txt'];
 filenamePhiA=[filenameWOext '-phiA.txt'];
 filenamePhiD=[filenameWOext '-phiD.txt'];
 
-filenameEET=[filenameWOext '-IdsEET.txt'];
 filenameEHT=[filenameWOext '-IdsEHT.txt'];
+filenameEET=[filenameWOext '-IdsEET.txt'];
 
 % ---------------------------------------------
 % Load data
 % ---------------------------------------------
 
-Morph =  readmatrix([NameFolderGraspi 'calculateKrec/' filename],'NumHeaderLines',1);
-sizeMorph = size(Morph);
+% Morph =  readmatrix([NameFolderGraspi 'calculateKrec/' filename],'NumHeaderLines',1);
+% sizeMorph = size(Morph);
 
 phiAMorph=importdata([NameFolderGraspi 'calculateKrec/' filenamePhiA ]);
 phiDMorph=importdata([NameFolderGraspi 'calculateKrec/' filenamePhiD ]);
@@ -49,23 +49,23 @@ MorphEHT=zeros(sizeMorph);
 % ---------------------------------------------
 % NB: part of this has already been done!!!
 
-EET=importdata([NameFolderGraspi 'calculateKrec/' filenameEET]);
-sizeEET=size(EET);
-for i=1:sizeEET(1)
-    x=EET(i,1);
-    y=EET(i,2);
-    color=EET(i,3);
-    MorphEET(y+1,x+1)=1;
-end
-
-EHT=importdata([NameFolderGraspi 'calculateKrec/' filenameEHT]);
-sizeEHT=size(EHT);
-for i=1:sizeEHT(1)
-    x=EHT(i,1);
-    y=EHT(i,2);
-    color=EHT(i,3);
-    MorphEHT(y+1,x+1)=1;
-end
+% EET=importdata([NameFolderGraspi 'calculateKrec/' filenameEET]);
+% sizeEET=size(EET);
+% for i=1:sizeEET(1)
+%     x=EET(i,1);
+%     y=EET(i,2);
+%     color=EET(i,3);
+%     MorphEET(y+1,x+1)=1;
+% end
+% 
+% EHT=importdata([NameFolderGraspi 'calculateKrec/' filenameEHT]);
+% sizeEHT=size(EHT);
+% for i=1:sizeEHT(1)
+%     x=EHT(i,1);
+%     y=EHT(i,2);
+%     color=EHT(i,3);
+%     MorphEHT(y+1,x+1)=1;
+% end
 
 countN2=0;
 sizeMorphEET=size(MorphEET);
@@ -77,32 +77,35 @@ for ix=1:sizeMorphEET(1)
     end
 end
 
-D3a=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3a]);
-sizeD3a=size(D3a);
-for i=1:sizeD3a(1)
-    x=D3a(i,1);
-    y=D3a(i,2);
-    color=D3a(i,4);
-    MorphDesc3(y+1,x+1)=2;
-end
-
-D3b=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3b]);
-sizeD3b=size(D3b);
-for i=1:sizeD3b(1)
-    x=D3b(i,1);
-    y=D3b(i,2);
-    color=D3b(i,4);
-    MorphDesc3(y+1,x+1)=1;
-end
-
-D3c=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3c]);
-sizeD3c=size(D3c);
-for i=1:sizeD3c(1)
-    x=D3c(i,1);
-    y=D3c(i,2);
-    color=D3c(i,4);
-    MorphDesc3(y+1,x+1)=3;
-end
+% % This is the same as DETmixed in VisualizeAllMorphAuto
+% D3a=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3a]);
+% sizeD3a=size(D3a);
+% for i=1:sizeD3a(1)
+%     x=D3a(i,1);
+%     y=D3a(i,2);
+%     color=D3a(i,4);
+%     MorphDesc3(y+1,x+1)=2;
+% end
+% 
+% % This is the same as DEETacceptor in VisualizeAllMorphAuto
+% D3b=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3b]);
+% sizeD3b=size(D3b);
+% for i=1:sizeD3b(1)
+%     x=D3b(i,1);
+%     y=D3b(i,2);
+%     color=D3b(i,4);
+%     MorphDesc3(y+1,x+1)=1;
+% end
+% 
+% % This is the same as DEHTdonor in VisualizeAllMorphAuto
+% D3c=importdata([NameFolderGraspi 'calculateKrec/' filenameDesc3c]);
+% sizeD3c=size(D3c);
+% for i=1:sizeD3c(1)
+%     x=D3c(i,1);
+%     y=D3c(i,2);
+%     color=D3c(i,4);
+%     MorphDesc3(y+1,x+1)=3;
+% end
 
 % ---------------------------------------------
 % Calculation: bimolecular recombination prefactor

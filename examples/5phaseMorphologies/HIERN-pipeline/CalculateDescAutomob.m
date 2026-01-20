@@ -1,6 +1,4 @@
 function [ MobEHT, IndEHT, MobEET, IndEET, MobEDesc, MobHDesc ] = CalculateDescAutomob (inputFile, NameFolderGraspi, PostParam )
-% myFiles = dir('MorphFields*MorphoDesc.txt'); %gets all mat files in struct
-% nMorph = length(myFiles);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load data and define filenames
@@ -16,22 +14,21 @@ filenameWOext = extractBefore(filename, '.');
 filenameDescETmixed=[filenameWOext '-IdsETmixed.txt'];
 filenameDescEETacceptor=[filenameWOext '-IdsEETacceptor.txt'];
 filenameDescEHTdonor=[filenameWOext '-IdsEHTdonor.txt'];
+filenameEET=[filenameWOext '-IdsEET.txt'];
+filenameEHT=[filenameWOext '-IdsEHT.txt'];
 
 filenamePhiA=[filenameWOext '-phiA.txt'];
 filenamePhiD=[filenameWOext '-phiD.txt'];
-
-filenameEET=[filenameWOext '-IdsEET.txt'];
-filenameEHT=[filenameWOext '-IdsEHT.txt'];
 
 % ---------------------------------------------
 % Load data
 % ---------------------------------------------
 
-Morph =  readmatrix([NameFolderGraspi 'calculateMobility/' filename],'NumHeaderLines',1);
-sizeMorph = size(Morph);
+% Morph =  readmatrix([NameFolderGraspi 'calculateMobility/' filename],'NumHeaderLines',1);
+% sizeMorph = size(Morph);
 
-phiAMorph=importdata([NameFolderGraspi 'calculateMobility/' filenamePhiA]);
-phiDMorph=importdata([NameFolderGraspi 'calculateMobility/' filenamePhiD]);
+% phiAMorph=importdata([NameFolderGraspi 'calculateMobility/' filenamePhiA]);
+% phiDMorph=importdata([NameFolderGraspi 'calculateMobility/' filenamePhiD]);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Matrices characterizing the different fields
@@ -42,10 +39,11 @@ phiDMorph=importdata([NameFolderGraspi 'calculateMobility/' filenamePhiD]);
 % ---------------------------------------------
 
 MorphDesc=zeros(sizeMorph);
-MobEET=zeros(sizeMorph);
-MobEHT=zeros(sizeMorph);
 MorphEET=zeros(sizeMorph);
 MorphEHT=zeros(sizeMorph);
+
+MobEET=zeros(sizeMorph);
+MobEHT=zeros(sizeMorph);
 
 whphi2_EHT = zeros(size(Morph));
 whphi2_EET = zeros(size(Morph));
@@ -60,55 +58,55 @@ HEffdepMobEET=zeros(sizeMorph(1),1);
 % ---------------------------------------------
 % NB: part of this has already been done!!!
 
-% This is the effective electron transport phase
-EET=importdata([NameFolderGraspi 'calculateMobility/' filenameEET]);
-sizeEET=size(EET);
-for i=1:sizeEET(1)
-    x=EET(i,1);
-    y=EET(i,2);
-    color=EET(i,3);
-    MorphEET(y+1,x+1)=1;
-end
+% % This is the effective electron transport phase
+% EET=importdata([NameFolderGraspi 'calculateMobility/' filenameEET]);
+% sizeEET=size(EET);
+% for i=1:sizeEET(1)
+%     x=EET(i,1);
+%     y=EET(i,2);
+%     color=EET(i,3);
+%     MorphEET(y+1,x+1)=1;
+% end
 
-% This is the effective hole transport phase
-EHT=importdata([NameFolderGraspi 'calculateMobility/' filenameEHT]);
-sizeEHT=size(EHT);
-for i=1:sizeEHT(1)
-    x=EHT(i,1);
-    y=EHT(i,2);
-    color=EHT(i,3);
-    MorphEHT(y+1,x+1)=1;
-end
-
-% This is the ?mixed part of the CETP
-DETmixed=importdata([NameFolderGraspi 'calculateMobility/' filenameDescETmixed]);
-sizeDETmixed=size(DETmixed);
-for i=1:sizeDETmixed(1)
-    x=DETmixed(i,1);
-    y=DETmixed(i,2);
-    color=DETmixed(i,4);
-    MorphDesc(y+1,x+1)=2;
-end
-
-% This is the part of the effective electron transport phase in the acceptor phases?
-DEETacceptor=importdata([NameFolderGraspi 'calculateMobility/' filenameDescEETacceptor]);
-sizeDEETacceptor=size(DEETacceptor);
-for i=1:sizeDEETacceptor(1)
-    x=DEETacceptor(i,1);
-    y=DEETacceptor(i,2);
-    color=DEETacceptor(i,4);
-    MorphDesc(y+1,x+1)=1;
-end
-
-% This is the part of the effective hole transport phase in the donor phases?
-DEHTdonor=importdata([NameFolderGraspi 'calculateMobility/' filenameDescEHTdonor]);
-sizeDEHTdonor=size(DEHTdonor);
-for i=1:sizeDEHTdonor(1)
-    x=DEHTdonor(i,1);
-    y=DEHTdonor(i,2);
-    color=DEHTdonor(i,4);
-    MorphDesc(y+1,x+1)=3;
-end
+% % This is the effective hole transport phase
+% EHT=importdata([NameFolderGraspi 'calculateMobility/' filenameEHT]);
+% sizeEHT=size(EHT);
+% for i=1:sizeEHT(1)
+%     x=EHT(i,1);
+%     y=EHT(i,2);
+%     color=EHT(i,3);
+%     MorphEHT(y+1,x+1)=1;
+% end
+% 
+% % This is the ?mixed part of the CETP
+% DETmixed=importdata([NameFolderGraspi 'calculateMobility/' filenameDescETmixed]);
+% sizeDETmixed=size(DETmixed);
+% for i=1:sizeDETmixed(1)
+%     x=DETmixed(i,1);
+%     y=DETmixed(i,2);
+%     color=DETmixed(i,4);
+%     MorphDesc(y+1,x+1)=2;
+% end
+% 
+% % This is the part of the effective electron transport phase in the acceptor phases?
+% DEETacceptor=importdata([NameFolderGraspi 'calculateMobility/' filenameDescEETacceptor]);
+% sizeDEETacceptor=size(DEETacceptor);
+% for i=1:sizeDEETacceptor(1)
+%     x=DEETacceptor(i,1);
+%     y=DEETacceptor(i,2);
+%     color=DEETacceptor(i,4);
+%     MorphDesc(y+1,x+1)=1;
+% end
+% 
+% % This is the part of the effective hole transport phase in the donor phases?
+% DEHTdonor=importdata([NameFolderGraspi 'calculateMobility/' filenameDescEHTdonor]);
+% sizeDEHTdonor=size(DEHTdonor);
+% for i=1:sizeDEHTdonor(1)
+%     x=DEHTdonor(i,1);
+%     y=DEHTdonor(i,2);
+%     color=DEHTdonor(i,4);
+%     MorphDesc(y+1,x+1)=3;
+% end
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Identify useful domains
