@@ -1,4 +1,4 @@
-function [ status ] = VisualizeAllMorphsAuto_plots( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc3, MorphEET, MorphEHT, DistHole, DistElec, DissoEfficiency )
+function [ status ] = Struct2Prop_ElecMorphoDescr_TP_disso_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc3, MorphEET, MorphEHT, DistHole, DistElec, DissoEfficiency )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -75,7 +75,7 @@ myColors = [
 colormap(myColors)
 %     colormap(customMapDesc);
 %     colorbar
-imageFilename=sprintf('_1%s_DescCRETP.png', filenameWOext);
+imageFilename=sprintf('_4_%s_CETP.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
@@ -100,7 +100,7 @@ caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colormap(customEET);
-imageFilename=sprintf('_2%s_EET.png', filenameWOext);
+imageFilename=sprintf('_5_%s_EETP.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
@@ -125,7 +125,7 @@ caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colormap(customEHT);
-imageFilename=sprintf('_3%s_EHT.png', filenameWOext);
+imageFilename=sprintf('_6_%s_EHTP.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
@@ -152,7 +152,7 @@ xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar
 colormap(jet(21));
-imageFilename=sprintf('_4%s_DistHol.png', filenameWOext);
+imageFilename=sprintf('_7_%s_DistHol.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
@@ -179,7 +179,7 @@ colorbar
 colormap(jet(100));
 xlabel('z [nm]')
 ylabel('x [nm]')
-imageFilename=sprintf('_5%s_DistElec.png', filenameWOext);
+imageFilename=sprintf('_8_%s_DistElec.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
@@ -206,7 +206,7 @@ colorbar
 xlabel('z [nm]')
 ylabel('x [nm]')
 colormap([ [1 1 1]; jet(121)]);
-imageFilename=sprintf('_6%s_DissoEfficiency.png', filenameWOext);
+imageFilename=sprintf('_9_%s_DissoEfficiency.png', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave  imageFilename(1:end-4) '.fig'])
 

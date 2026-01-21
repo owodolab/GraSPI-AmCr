@@ -1,4 +1,4 @@
-function [ MorphoAnalysis ] = VisualizeAllMorphsAuto( inputFile, NameFolderGraspi, PostParam )
+function [ MorphoElecAnalysis ] = Struct2Prop_ElecMorphoDescr_TP_disso_mu_krec( inputFile, NameFolderGraspi, PostParam )
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,8 +150,8 @@ IndAcceptornoETP=find(((Morph == 1 ) | (Morph == 7 )) & (MorphEET==0)); %finds a
 IndDonornoETP=find(((Morph == 0 ) | (Morph == 5 ) ) & (MorphEHT==0));  %finds donor phase outside EHTP (Hole  effective transport phase)
 IndmixednoETP=find(((Morph == 3 ) | (MorphEET == 0 ) ) & (MorphEHT==0)); % finds mixed phase outside both effective transport phases (EHTP and EETP)
 
-DissoEfficiency(IndEHT)=exp(-DistHole(IndEHT)/PostParam.Ld(1));
-DissoEfficiency(IndEET)=exp(-DistElec(IndEET)/PostParam.Ld(2));
+DissoEfficiency(IndEHT)=exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
+DissoEfficiency(IndEET)=exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
 DissoEfficiency(IndCRETP)=1;
 
 DissoEfficiency(IndAcceptornoETP)=0;
@@ -223,9 +223,9 @@ HEffdepMobEET=zeros(sizeMorph(1),1);
 % ---------------------------------------------
 
 % Fill with mobility values of crystalline/amorphous donor
-whphi2_EHT(IndMixed) = PostParam.Weights(1);
-whphi2_EHT(IndDam) = PostParam.Weights(1);
-whphi2_EHT(IndDcr) = PostParam.Weights(3);
+whphi2_EHT(IndMixed) = PostParam.Elec.Weights(1);
+whphi2_EHT(IndDam) = PostParam.Elec.Weights(1);
+whphi2_EHT(IndDcr) = PostParam.Elec.Weights(3);
 % Multiply by phi^2
 whphi2_EHT = whphi2_EHT.*phiDMorph.^2;
 % Set to zero outside EHT
@@ -236,9 +236,9 @@ whphi2_EHT(IndnotEHT) = 0;
 % ---------------------------------------------
 
 % Fill with wh
-whphi2_EET(IndMixed) = PostParam.Weights(2);
-whphi2_EET(IndAam) = PostParam.Weights(2);
-whphi2_EET(IndAcr) = PostParam.Weights(3);
+whphi2_EET(IndMixed) = PostParam.Elec.Weights(2);
+whphi2_EET(IndAam) = PostParam.Elec.Weights(2);
+whphi2_EET(IndAcr) = PostParam.Elec.Weights(3);
 % Multiply by phi^2
 whphi2_EET = whphi2_EET.*phiAMorph.^2;
 % Set to zero outside EET
@@ -269,21 +269,21 @@ whphi2_EHT_Neighb2 = circshift(whphi2_EHT_Neighb1,1,2)*cos(-pi/4);
 IndicCr_EHT_Neighb2 = circshift(IndicCr_EHT_Neighb1,1,2);
 PhaseSwitch = IndicCr_EHT_Neighb2-IndicCr_EHT;
 IndPhaseSwitch = find(IndicCr_EHT_Neighb2-IndicCr_EHT==1);
-whphi2_EHT_Neighb2(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EHT_Neighb2(IndPhaseSwitch);
+whphi2_EHT_Neighb2(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb2(IndPhaseSwitch);
 
 % Now mobility for neighbour right
 whphi2_EHT_Neighb3 = circshift(whphi2_EHT_Neighb1,-1,2)*cos(pi/4);
 IndicCr_EHT_Neighb3 = circshift(IndicCr_EHT_Neighb1,-1,2);
 PhaseSwitch = IndicCr_EHT_Neighb3-IndicCr_EHT;
 IndPhaseSwitch = find(IndicCr_EHT_Neighb3-IndicCr_EHT==1);
-whphi2_EHT_Neighb3(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EHT_Neighb3(IndPhaseSwitch);
+whphi2_EHT_Neighb3(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb3(IndPhaseSwitch);
 
 % Penalty on mobility along dim 1 do not move this line elsewhere !!
 % Olivier: WHY THE HELL?
 % This line is useless: PhaseSwitch = IndicCr_EHT_Neighb1-IndicCr_EHT;
 % Olivier: I think both lines below could go up
 IndPhaseSwitch = find(IndicCr_EHT_Neighb1-IndicCr_EHT==1);
-whphi2_EHT_Neighb1(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EHT_Neighb1(IndPhaseSwitch);
+whphi2_EHT_Neighb1(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb1(IndPhaseSwitch);
 
 % Take the max
 whphi2_EHT_AllNeighb = max(whphi2_EHT_Neighb1,whphi2_EHT_Neighb2);
@@ -308,19 +308,19 @@ whphi2_EET_Neighb2 = circshift(whphi2_EET_Neighb1,1,2)*cos(-pi/4);
 IndicCr_EET_Neighb2 = circshift(IndicCr_EET_Neighb1,1,1);
 PhaseSwitch = IndicCr_EET_Neighb2-IndicCr_EET;
 IndPhaseSwitch = find(IndicCr_EET_Neighb2-IndicCr_EET==1);
-whphi2_EET_Neighb2(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EET_Neighb2(IndPhaseSwitch);
+whphi2_EET_Neighb2(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb2(IndPhaseSwitch);
 
 % Now mobility for neighbour right
 whphi2_EET_Neighb3 = circshift(whphi2_EET_Neighb1,-1,2)*cos(pi/4);
 IndicCr_EET_Neighb3 = circshift(IndicCr_EET_Neighb1,1,1);
 PhaseSwitch = IndicCr_EET_Neighb3-IndicCr_EET;
 IndPhaseSwitch = find(IndicCr_EET_Neighb3-IndicCr_EET==1);
-whphi2_EET_Neighb3(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EET_Neighb3(IndPhaseSwitch);
+whphi2_EET_Neighb3(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb3(IndPhaseSwitch);
 
 %penalty on mobility along dim 1 do not move this line elsewhere !!
 PhaseSwitch = IndicCr_EET_Neighb1-IndicCr_EET;
 IndPhaseSwitch = find(IndicCr_EET_Neighb1-IndicCr_EET==1);
-whphi2_EET_Neighb1(IndPhaseSwitch) = PostParam.k_pen_A2C*whphi2_EET_Neighb1(IndPhaseSwitch);
+whphi2_EET_Neighb1(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb1(IndPhaseSwitch);
 
 % Take the max
 whphi2_EET_AllNeighb = max(whphi2_EET_Neighb1,whphi2_EET_Neighb2);
@@ -335,8 +335,8 @@ MobEET(IndEET) = whphi2_EET_AllNeighb(IndEET);
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Only mode 1 should be used...
 
-[ MobEDesc ] = HarmonicAverage( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.MobilityMinValue, PostParam.MobilityAveragingMode);
-[ MobHDesc ] = HarmonicAverage( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.MobilityMinValue, PostParam.MobilityAveragingMode);
+[ MobEDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
+[ MobHDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Save the global descriptor values in a file
@@ -468,7 +468,7 @@ HEffdepMobEET(Indnonode)=0;
 %             currPhase=Morph(iy,ix);
 %             if ( (currPhase == 0 ) || (currPhase == 3 ) || (currPhase == 5 ))
 %                 % locMuH=ComputeLocMuH(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:));
-%                 locMuH = ComputeLocMuH_ORYA(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesD,PostParam.Weights,SourceTargetPlanesUp);
+%                 locMuH = ComputeLocMuH_ORYA(ix,iy,twoLayersUp,  phiDMorph(iy:iy+1,:),Morph(iy:iy+1,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesD,PostParam.Elec.Weights,SourceTargetPlanesUp);
 %                 if(MorphEHT(iy,ix)==1)
 %                     sumEffEH=sumEffEH+locMuH;
 %                     itEffH=itEffH+1;
@@ -479,7 +479,7 @@ HEffdepMobEET(Indnonode)=0;
 %             if ( (currPhase == 1 ) || (currPhase == 3 ) || (currPhase == 7 ))
 %                 % locMuE=ComputeLocMuE(ix,iy,twoLayersDown,phiAMorph(iy-1:iy,:),Morph(iy-1:iy,:));
 %                 locMuE=ComputeLocMuH_ORYA(ix,iy,twoLayersDown,phiAMorph(i
-%                 y-1:iy,:),Morph(iy-1:iy,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesA,PostParam.Weights,SourceTargetPlanesDown);
+%                 y-1:iy,:),Morph(iy-1:iy,:),NEI,Ndim,Connectivity,DeltaX,MorphoTypesA,PostParam.Elec.Weights,SourceTargetPlanesDown);
 %                 if (MorphEET(iy,ix) == 1)
 %                     sumEffEE=sumEffEE+locMuE;
 %                     itEffE=itEffE+1;
@@ -508,22 +508,22 @@ HEffdepMobEET(Indnonode)=0;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MorphoAnalysis.PhaseType.Morph = Morph;
-MorphoAnalysis.PhaseType.MorphDesc3 = MorphDesc3;
-MorphoAnalysis.PhaseType.MorphEET = MorphEET;
-MorphoAnalysis.PhaseType.MorphEHT = MorphEHT;
-MorphoAnalysis.PhaseType.IndEHT = IndEHT;
-MorphoAnalysis.PhaseType.IndEET = IndEET;
-MorphoAnalysis.Dissociation.DistHole = DistHole;
-MorphoAnalysis.Dissociation.DistElec = DistElec;
-MorphoAnalysis.Dissociation.DissoEfficiency = DissoEfficiency;
-MorphoAnalysis.Recombination.CalcKrecFinal = CalcKrecFinal;
-MorphoAnalysis.Recombination.krecDescPlot = krecDescPlot;
-MorphoAnalysis.Recombination.krecDescFinal = krecDescFinal;
-MorphoAnalysis.Mobilities.MobEHT = MobEHT;
-MorphoAnalysis.Mobilities.MobEET = MobEET;
-MorphoAnalysis.Mobilities.MobEDesc = MobEDesc;
-MorphoAnalysis.Mobilities.MobHDesc = MobHDesc;
+MorphoElecAnalysis.PhaseType.Morph = Morph;
+MorphoElecAnalysis.PhaseType.MorphDesc3 = MorphDesc3;
+MorphoElecAnalysis.PhaseType.MorphEET = MorphEET;
+MorphoElecAnalysis.PhaseType.MorphEHT = MorphEHT;
+MorphoElecAnalysis.PhaseType.IndEHT = IndEHT;
+MorphoElecAnalysis.PhaseType.IndEET = IndEET;
+MorphoElecAnalysis.Dissociation.DistHole = DistHole;
+MorphoElecAnalysis.Dissociation.DistElec = DistElec;
+MorphoElecAnalysis.Dissociation.DissoEfficiency = DissoEfficiency;
+MorphoElecAnalysis.Recombination.CalcKrecFinal = CalcKrecFinal;
+MorphoElecAnalysis.Recombination.krecDescPlot = krecDescPlot;
+MorphoElecAnalysis.Recombination.krecDescFinal = krecDescFinal;
+MorphoElecAnalysis.Mobilities.MobEHT = MobEHT;
+MorphoElecAnalysis.Mobilities.MobEET = MobEET;
+MorphoElecAnalysis.Mobilities.MobEDesc = MobEDesc;
+MorphoElecAnalysis.Mobilities.MobHDesc = MobHDesc;
 
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Figures

@@ -1,4 +1,4 @@
-function [ ElecDescriptorValues, ElecDescriptorNames ] = VisualizeDescriptorsAuto( NameFileSave, TimeStepChoice, hhh, numworkflow, ResultsSaveFile )
+function [ ElecDescriptorValues, ElecDescriptorNames ] = Struct2Prop_ElecMorphoDescr_Synth( NameFileSave, TimeStepChoice, hhh, numworkflow, ResultsSaveFile )
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Read the data from the file written by Olga's Graspi routine 5-ExtractDescriptors2.sh

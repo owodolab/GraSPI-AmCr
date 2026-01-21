@@ -1,4 +1,4 @@
-function  [ AveragedMobility ] = HarmonicAverage( MobilityMatrix, IndMobETP, MorphETP, penalty, Mode )
+function  [ AveragedMobility ] = Struct2Prop_ElecMorphoDescr_muavg( MobilityMatrix, IndMobETP, MorphETP, penalty, Mode )
 % penalty: it is the default, very low mobility value we set at the nodes of the ETP where the mobility is zero when entering the routine
 % Mode: defines the way we average
 %   Mode 1- Harmonic average on vertical direction per column and then arithmetic average

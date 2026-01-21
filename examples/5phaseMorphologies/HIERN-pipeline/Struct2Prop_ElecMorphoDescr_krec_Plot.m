@@ -1,4 +1,4 @@
-function [ status ] = VisualizekrecAuto_plots( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, krecDescPlot )
+function [ status ] = Struct2Prop_ElecMorphoDescr_krec_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, krecDescPlot )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -67,7 +67,7 @@ caxis([-0.01 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar;
-imageFilename=sprintf('_7%s_krec', filenameWOext);
+imageFilename=sprintf('_10_%s_krec', filenameWOext);
 
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])

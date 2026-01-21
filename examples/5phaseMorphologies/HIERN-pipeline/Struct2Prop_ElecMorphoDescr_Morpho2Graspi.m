@@ -1,4 +1,4 @@
-function [ status ] = PreProcessMorphsAuto( NameFolderGraspi, NameFile, PostParam, Inputs )
+function [ status ] = Struct2Prop_ElecMorphoDescr_Morpho2Graspi( NameFolderGraspi, NameFile, PostParam, Inputs )
 
 % -------------------------------------------------------------------------
 % Load File
@@ -15,9 +15,9 @@ PhiAFileName = sprintf('Morph%s-phiA.txt',NameFileWoExt);
 % -------------------------------------------------------------------------
 
 load([NameFolderGraspi 'src_data/' NameFile]);
-nxyz = Res.nxyz;
+nxyz = MorphoPreProc.nxyz;
 FlagBC = Inputs.Mesh.FlagBC;
-LabelsImg=reshape(Res.PhaseType,nxyz(1),nxyz(3));
+LabelsImg=reshape(MorphoPreProc.PhaseType,nxyz(1),nxyz(3));
 [row,col] = find(LabelsImg==0);
 
 height=min(col);
@@ -56,13 +56,13 @@ fprintf(fileID, [repmat('%d ', 1, size(Img2save,1)) '\n'], Img2save) ;
 fclose(fileID);
 
 
-phiDMorph=reshape(Res.PreProFields(:,1),nxyz(1),nxyz(3));
+phiDMorph=reshape(MorphoPreProc.PreProFields(:,1),nxyz(1),nxyz(3));
 phiDMorphcrop=phiDMorph(:,1:height);
 fileIDphiD = fopen([NameFolderGraspi 'src_data/' PhiDFileName],'w');
 fprintf(fileIDphiD, [repmat('%d ', 1, size(phiDMorphcrop,1)) '\n'], phiDMorphcrop) ;
 fclose(fileIDphiD);
 
-phiAMorph=reshape(Res.PreProFields(:,2),nxyz(1),nxyz(3));
+phiAMorph=reshape(MorphoPreProc.PreProFields(:,2),nxyz(1),nxyz(3));
 phiAMorphcrop=phiAMorph(:,1:height);
 fileIDphiA = fopen([NameFolderGraspi 'src_data/' PhiAFileName],'w');
 fprintf(fileIDphiA, [repmat('%d ', 1, size(phiAMorphcrop,1)) '\n'], phiAMorphcrop) ;

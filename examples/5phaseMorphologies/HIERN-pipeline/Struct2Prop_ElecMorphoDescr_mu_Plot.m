@@ -1,4 +1,4 @@
-function [ status ] = VisualizemobAuto_plots( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MobEHT, IndEHT, MobEET, IndEET )
+function [ status ] = Struct2Prop_ElecMorphoDescr_mu_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MobEHT, IndEHT, MobEET, IndEET )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -73,7 +73,7 @@ colorbar;
 xlabel('z [nm]')
 ylabel('x [nm]')
 
-imageFilename=sprintf('_8%s_MobilityEHT', filenameWOext);
+imageFilename=sprintf('_11_%s_MobHole', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])
 
@@ -102,7 +102,7 @@ xlabel('z [nm]')
 ylabel('x [nm]')
 colormap([ [1 1 1] ;jet(100)]);
 
-imageFilename=sprintf('_9%s_MobilityEET', filenameWOext);
+imageFilename=sprintf('_12_%s_MobElec', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])
 
