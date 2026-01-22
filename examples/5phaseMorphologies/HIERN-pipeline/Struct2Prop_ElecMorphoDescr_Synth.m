@@ -35,13 +35,21 @@ if ( fid > 0 )
 		MUhG  = str2num(cellArray{3}); % effective Hole mobility
 		KrG   = str2num(cellArray{4}); % krec normalized with N2
 		ETAdG = str2num(cellArray{5}); % Exciton dissociation efficiency
+		n_M_eff = str2num(cellArray{6}); % Exciton dissociation efficiency
+		e_A_eff = str2num(cellArray{7}); % Exciton dissociation efficiency
+		e_D_eff = str2num(cellArray{8}); % Exciton dissociation efficiency
+		Pb = str2num(cellArray{9}); % Exciton dissociation efficiency
+		Pc = str2num(cellArray{10}); % Exciton dissociation efficiency
+		Nb = str2num(cellArray{11}); % Exciton dissociation efficiency
+		Nc = str2num(cellArray{12}); % Exciton dissociation efficiency
+		n = str2num(cellArray{13}); % Exciton dissociation efficiency
 		
 		% Print to the command window for check
 		fprintf("MUeG = %f, MUhG = %f, KrG = %f, ETAdG = %f\n",MUeG,MUhG,KrG,ETAdG);
 		disp(['hhh=' num2str(hhh)])
 		
 		% Concatenate into a matrix
-		Data = [Data;[MUeG,MUhG,KrG,ETAdG]];
+		Data = [Data;[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]];
 		
 	end
 	
@@ -53,7 +61,7 @@ fclose(fid);
 % Organize the data for output and further use
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ElecDescriptorNames = {'MUeG','MUhG','KrG','ETAdG'};
+ElecDescriptorNames = {'MUeG','MUhG','KrG','ETAdG','n_M_eff','e_A_eff','e_D_eff','Pb','Pc','Nb','Nc','n'};
 index = find(MorphNames==['Morph' NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
 ElecDescriptorValues = Data(index-1,:);
 
