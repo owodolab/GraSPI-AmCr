@@ -49,7 +49,7 @@ if ( fid > 0 )
 		disp(['hhh=' num2str(hhh)])
 		
 		% Concatenate into a matrix
-		Data = [Data,[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]];
+		Data = [Data;[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]]
 		
 	end
 	
@@ -58,8 +58,15 @@ end
 fclose(fid);
 
 % Load the traps values from the .mat file (on long term, we should extract everything from the .mat file...
-load([NameWorkflowSave NameMorpho{hhh} '_MorphoElecAnalysis.mat'])
-Data = [Data,[MorphoElecAnalysis.Recombination.krecTrapeDesc,MorphoElecAnalysis.Recombination.krecTraphDesc,MorphoElecAnalysis.Recombination.krecTrapehDesc]];
+Nmorpho = numel(NameMorpho);
+krecTrap = zeros(Nmorpho,3);
+for hhh2 = 1:Nmorpho
+	load([NameWorkflowSave NameMorpho{hhh2} '_MorphoElecAnalysis.mat'])
+	krecTrap(hhh2,1) = MorphoElecAnalysis.Recombination.krecTrapeDesc;
+	krecTrap(hhh2,2) = MorphoElecAnalysis.Recombination.krecTraphDesc;
+	krecTrap(hhh2,3) = MorphoElecAnalysis.Recombination.krecTrapehDesc;
+end
+Data = [Data,krecTrap];
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Organize the data for output and further use

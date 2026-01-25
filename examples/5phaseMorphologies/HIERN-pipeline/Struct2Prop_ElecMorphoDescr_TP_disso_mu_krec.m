@@ -62,22 +62,22 @@ MorphEHT=zeros(sizeMorph);
 % ---------------------------------------------
 
 % This is the effective electron transport phase
-EET=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEET]);
+EET = importdata([NameFolderGraspi 'visualMorph2/' filenameDescEET]);
 EET = unique(EET,'rows'); % because I think there's a mistake in Olga's file
-% if ~isempty(EET)
-ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
-MorphEET(ind) = 1;
-% end
+if ~isempty(EET)
+	ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
+	MorphEET(ind) = 1;
+end
 IndEET=find(MorphEET==1);
 IndnotEET = find(MorphEET~=1);
 
 % This is the effective hole transport phase
 EHT=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEHT]);
 EHT = unique(EHT,'rows'); % because I think there's a mistake in Olga's file
-% if ~isempty(EHT)
-ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
-MorphEHT(ind) = 1;
-% end
+if ~isempty(EHT)
+	ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
+	MorphEHT(ind) = 1;
+end
 IndEHT=find(MorphEHT==1);
 IndnotEHT = find(MorphEHT~=1);
 
@@ -87,24 +87,24 @@ IndnotEHT = find(MorphEHT~=1);
 
 % This is the mixed part of the CETP
 DETmixed=importdata([NameFolderGraspi 'visualMorph2/' filenameDescETmixed]);
-% if ~isempty(DETmixed)
-ind = sub2ind(sizeMorph,DETmixed(:,2)+1,DETmixed(:,1)+1);
-MorphDesc3(ind) = 2;
-% end
+if ~isempty(DETmixed)
+	ind = sub2ind(sizeMorph,DETmixed(:,2)+1,DETmixed(:,1)+1);
+	MorphDesc3(ind) = 2;
+end
 
 % This is the pure acceptor phase part of the CETP
 DEETacceptor=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEETacceptor]);
-% if ~isempty(DEETacceptor)
-ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
-MorphDesc3(ind) = 1;
-% end
+if ~isempty(DEETacceptor)
+	ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
+	MorphDesc3(ind) = 1;
+end
 
 % This is the pure donor phase part of the CETP
 DEHTdonor=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEHTdonor]);
-% if ~isempty(DEHTdonor)
-ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
-MorphDesc3(ind) = 3;
-% end
+if ~isempty(DEHTdonor)
+	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
+	MorphDesc3(ind) = 3;
+end
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,16 +126,16 @@ DistElec=zeros(sizeMorph);
 % ---------------------------------------------
 
 DistEHT=importdata([NameFolderGraspi 'visualMorph2/' filenameDistHole]);
-% if ~isempty(DistEHT)
-ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
-DistHole(ind) = DistEHT(:,3);
-% end
+if ~isempty(DistEHT)
+	ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
+	DistHole(ind) = DistEHT(:,3);
+end
 
 DistEET=importdata([NameFolderGraspi 'visualMorph2/' filenameDistElec]);
-% if ~isempty(DistEET)
-ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
-DistElec(ind) = DistEET(:,3);
-% end
+if ~isempty(DistEET)
+	ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
+	DistElec(ind) = DistEET(:,3);
+end
 
 % ---------------------------------------------
 % Exciton diffusion efficiency
