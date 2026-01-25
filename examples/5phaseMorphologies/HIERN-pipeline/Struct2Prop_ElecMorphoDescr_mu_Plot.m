@@ -73,7 +73,7 @@ colorbar;
 xlabel('z [nm]')
 ylabel('x [nm]')
 
-imageFilename=sprintf('_11_%s_MobHole', filenameWOext);
+imageFilename=sprintf('_13_%s_MobHole', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])
 
@@ -102,7 +102,7 @@ xlabel('z [nm]')
 ylabel('x [nm]')
 colormap([ [1 1 1] ;jet(100)]);
 
-imageFilename=sprintf('_12_%s_MobElec', filenameWOext);
+imageFilename=sprintf('_14_%s_MobElec', filenameWOext);
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])
 

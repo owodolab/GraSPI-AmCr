@@ -1,4 +1,4 @@
-function [ status ] = Struct2Prop_ElecMorphoDescr_krec_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, krecDescPlot )
+function [ status ] = Struct2Prop_ElecMorphoDescr_krec_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, krecDescPlot, CalcKrecTrape, CalcKrecTraph )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -71,6 +71,53 @@ imageFilename=sprintf('_10_%s_krec', filenameWOext);
 
 print([NameWorkflowSave imageFilename],'-dpng');
 savefig([NameWorkflowSave imageFilename '.fig'])
+pause(1)
+
+% ---------------------------------------------
+% Trap recombination prefactors
+% ---------------------------------------------
+
+figure;
+colormap([[1 1 1];jet(100)]);
+Zpad = [CalcKrecTrape; CalcKrecTrape(end,:)];         % Repeat last row
+Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+[a,b]=size(CalcKrecTrape);
+x = 0:a;   % 21 x-coordinates
+y = 0:b;   % 11 y-coordinates
+[X, Y] = meshgrid(x, y);
+surf(X,Y,Zpad','EdgeColor','none')
+view(90,270)
+axis equal tight
+caxis([-0.01 1]);
+xlabel('z [nm]')
+ylabel('x [nm]')
+colorbar;
+imageFilename=sprintf('_11_%s_krectrape', filenameWOext);
+
+print([NameWorkflowSave imageFilename],'-dpng');
+savefig([NameWorkflowSave imageFilename '.fig'])
+pause(1)
+
+figure;
+colormap([[1 1 1];jet(100)]);
+Zpad = [CalcKrecTraph; CalcKrecTraph(end,:)];         % Repeat last row
+Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
+[a,b]=size(CalcKrecTraph);
+x = 0:a;   % 21 x-coordinates
+y = 0:b;   % 11 y-coordinates
+[X, Y] = meshgrid(x, y);
+surf(X,Y,Zpad','EdgeColor','none')
+view(90,270)
+axis equal tight
+caxis([-0.01 1]);
+xlabel('z [nm]')
+ylabel('x [nm]')
+colorbar;
+imageFilename=sprintf('_12_%s_krectraph', filenameWOext);
+
+print([NameWorkflowSave imageFilename],'-dpng');
+savefig([NameWorkflowSave imageFilename '.fig'])
+pause(1)
 
 close all;
 

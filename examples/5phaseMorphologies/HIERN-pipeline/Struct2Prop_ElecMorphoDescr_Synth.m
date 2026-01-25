@@ -1,4 +1,4 @@
-function [ ElecDescriptorValues, ElecDescriptorNames ] = Struct2Prop_ElecMorphoDescr_Synth( NameFileSave, TimeStepChoice, hhh, numworkflow, ResultsSaveFile )
+function [ ElecDescriptorValues, ElecDescriptorNames ] = Struct2Prop_ElecMorphoDescr_Synth( NameFileSave, NameWorkflowSave, NameMorpho, TimeStepChoice, hhh, numworkflow, ResultsSaveFile )
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Read the data from the file written by Olga's Graspi routine 5-ExtractDescriptors2.sh
@@ -49,7 +49,7 @@ if ( fid > 0 )
 		disp(['hhh=' num2str(hhh)])
 		
 		% Concatenate into a matrix
-		Data = [Data;[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]];
+		Data = [Data,[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]];
 		
 	end
 	
@@ -57,11 +57,15 @@ end
 % close the file
 fclose(fid);
 
+% Load the traps values from the .mat file (on long term, we should extract everything from the .mat file...
+load([NameWorkflowSave NameMorpho{hhh} '_MorphoElecAnalysis.mat'])
+Data = [Data,[MorphoElecAnalysis.Recombination.krecTrapeDesc,MorphoElecAnalysis.Recombination.krecTraphDesc,MorphoElecAnalysis.Recombination.krecTrapehDesc]];
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Organize the data for output and further use
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ElecDescriptorNames = {'MUeG','MUhG','KrG','ETAdG','n_M_eff','e_A_eff','e_D_eff','Pb','Pc','Nb','Nc','n'};
+ElecDescriptorNames = {'MUeG','MUhG','KrG','ETAdG','n_M_eff','e_A_eff','e_D_eff','Pb','Pc','Nb','Nc','n','krtrapeG','krtraphG','krtrapehG'};
 index = find(MorphNames==['Morph' NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
 ElecDescriptorValues = Data(index-1,:);
 

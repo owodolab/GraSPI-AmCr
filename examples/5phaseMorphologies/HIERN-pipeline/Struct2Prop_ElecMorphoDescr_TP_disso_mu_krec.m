@@ -169,10 +169,12 @@ DissoEfficiency(IndmixednoETP)=0;
 % ---------------------------------------------
 
 CalcKrecFinal = zeros(sizeMorph);
+CalcKrecTrape = zeros(sizeMorph);
+CalcKrecTraph = zeros(sizeMorph);
 
-% % ---------------------------------------------
-% % Calculation: bimolecular recombination prefactor
-% % ---------------------------------------------
+% ---------------------------------------------
+% Calculation: bimolecular recombination prefactor
+% ---------------------------------------------
 
 IndET = find(MorphDesc3~=0); % finds the nodes in the effective transport phases (EETP or EHTP)
 CalcKrecFinal(IndET) = 4*phiAMorph(IndET).*phiDMorph(IndET);
@@ -183,6 +185,16 @@ krecDescFinal = sum(sum(CalcKrecFinal))/Neetpehtp;
 krecDescPlot=-1*ones(size(CalcKrecFinal));
 krecDescPlot(IndEHT)=CalcKrecFinal(IndEHT);
 krecDescPlot(IndEET)=CalcKrecFinal(IndEET);
+
+% ---------------------------------------------
+% Calculation: trap recombination prefactors
+% ---------------------------------------------
+
+CalcKrecTrape(IndEET) = (1-phiAMorph(IndEET));
+krecTrapeDesc = sum(sum(CalcKrecTrape(IndEET)))/numel(IndEET);
+CalcKrecTraph(IndEHT) = (1-phiDMorph(IndEHT));
+krecTraphDesc = sum(sum(CalcKrecTraph(IndEHT)))/numel(IndEHT);
+krecTrapehDesc = (numel(IndEET)*krecTrapeDesc + numel(IndEHT)*krecTraphDesc)/(numel(IndEET)+numel(IndEHT));
 
 % ---------------------------------------------
 % Write results in a file
@@ -520,6 +532,11 @@ MorphoElecAnalysis.Dissociation.DissoEfficiency = DissoEfficiency;
 MorphoElecAnalysis.Recombination.CalcKrecFinal = CalcKrecFinal;
 MorphoElecAnalysis.Recombination.krecDescPlot = krecDescPlot;
 MorphoElecAnalysis.Recombination.krecDescFinal = krecDescFinal;
+MorphoElecAnalysis.Recombination.CalcKrecTrape = CalcKrecTrape;
+MorphoElecAnalysis.Recombination.krecTrapeDesc = krecTrapeDesc;
+MorphoElecAnalysis.Recombination.CalcKrecTraph = CalcKrecTraph;
+MorphoElecAnalysis.Recombination.krecTraphDesc = krecTraphDesc;
+MorphoElecAnalysis.Recombination.krecTrapehDesc = krecTrapehDesc;
 MorphoElecAnalysis.Mobilities.MobEHT = MobEHT;
 MorphoElecAnalysis.Mobilities.MobEET = MobEET;
 MorphoElecAnalysis.Mobilities.MobEDesc = MobEDesc;
