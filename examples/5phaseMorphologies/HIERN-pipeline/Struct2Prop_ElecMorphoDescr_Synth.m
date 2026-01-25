@@ -44,12 +44,12 @@ if ( fid > 0 )
 		Nc = str2num(cellArray{12}); % Exciton dissociation efficiency
 		n = str2num(cellArray{13}); % Exciton dissociation efficiency
 		
-		% Print to the command window for check
-		fprintf("MUeG = %f, MUhG = %f, KrG = %f, ETAdG = %f\n",MUeG,MUhG,KrG,ETAdG);
-		disp(['hhh=' num2str(hhh)])
+% 		% Print to the command window for check
+% 		fprintf("MUeG = %f, MUhG = %f, KrG = %f, ETAdG = %f\n",MUeG,MUhG,KrG,ETAdG);
+% 		disp(['hhh=' num2str(hhh)])
 		
 		% Concatenate into a matrix
-		Data = [Data;[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]]
+		Data = [Data;[MUeG,MUhG,KrG,ETAdG,n_M_eff,e_A_eff,e_D_eff,Pb,Pc,Nb,Nc,n]];
 		
 	end
 	

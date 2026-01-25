@@ -280,22 +280,28 @@ IndicCr_EHT_Neighb1 = circshift(IndicCr_EHT,-1,1);
 whphi2_EHT_Neighb2 = circshift(whphi2_EHT_Neighb1,1,2)*cos(-pi/4);
 IndicCr_EHT_Neighb2 = circshift(IndicCr_EHT_Neighb1,1,2);
 PhaseSwitch = IndicCr_EHT_Neighb2-IndicCr_EHT;
-IndPhaseSwitch = find(IndicCr_EHT_Neighb2-IndicCr_EHT==1);
-whphi2_EHT_Neighb2(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb2(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EHT_Neighb2-IndicCr_EHT==1);
+whphi2_EHT_Neighb2(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_D*whphi2_EHT_Neighb2(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EHT_Neighb2-IndicCr_EHT==-1);
+whphi2_EHT_Neighb2(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_D*whphi2_EHT_Neighb2(IndPhaseSwitch_C2A);
 
 % Now mobility for neighbour right
 whphi2_EHT_Neighb3 = circshift(whphi2_EHT_Neighb1,-1,2)*cos(pi/4);
 IndicCr_EHT_Neighb3 = circshift(IndicCr_EHT_Neighb1,-1,2);
 PhaseSwitch = IndicCr_EHT_Neighb3-IndicCr_EHT;
-IndPhaseSwitch = find(IndicCr_EHT_Neighb3-IndicCr_EHT==1);
-whphi2_EHT_Neighb3(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb3(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EHT_Neighb3-IndicCr_EHT==1);
+whphi2_EHT_Neighb3(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_D*whphi2_EHT_Neighb3(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EHT_Neighb3-IndicCr_EHT==-1);
+whphi2_EHT_Neighb3(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_D*whphi2_EHT_Neighb3(IndPhaseSwitch_C2A);
 
 % Penalty on mobility along dim 1 do not move this line elsewhere !!
 % Olivier: WHY THE HELL?
 % This line is useless: PhaseSwitch = IndicCr_EHT_Neighb1-IndicCr_EHT;
 % Olivier: I think both lines below could go up
-IndPhaseSwitch = find(IndicCr_EHT_Neighb1-IndicCr_EHT==1);
-whphi2_EHT_Neighb1(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EHT_Neighb1(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EHT_Neighb1-IndicCr_EHT==1);
+whphi2_EHT_Neighb1(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_D*whphi2_EHT_Neighb1(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EHT_Neighb1-IndicCr_EHT==-1);
+whphi2_EHT_Neighb1(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_D*whphi2_EHT_Neighb1(IndPhaseSwitch_C2A);
 
 % Take the max
 whphi2_EHT_AllNeighb = max(whphi2_EHT_Neighb1,whphi2_EHT_Neighb2);
@@ -319,20 +325,26 @@ IndicCr_EET_Neighb1 = circshift(IndicCr_EET,1,1);
 whphi2_EET_Neighb2 = circshift(whphi2_EET_Neighb1,1,2)*cos(-pi/4);
 IndicCr_EET_Neighb2 = circshift(IndicCr_EET_Neighb1,1,1);
 PhaseSwitch = IndicCr_EET_Neighb2-IndicCr_EET;
-IndPhaseSwitch = find(IndicCr_EET_Neighb2-IndicCr_EET==1);
-whphi2_EET_Neighb2(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb2(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EET_Neighb2-IndicCr_EET==1);
+whphi2_EET_Neighb2(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_A*whphi2_EET_Neighb2(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EET_Neighb2-IndicCr_EET==-1);
+whphi2_EET_Neighb2(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_A*whphi2_EET_Neighb2(IndPhaseSwitch_C2A);
 
 % Now mobility for neighbour right
 whphi2_EET_Neighb3 = circshift(whphi2_EET_Neighb1,-1,2)*cos(pi/4);
 IndicCr_EET_Neighb3 = circshift(IndicCr_EET_Neighb1,1,1);
 PhaseSwitch = IndicCr_EET_Neighb3-IndicCr_EET;
-IndPhaseSwitch = find(IndicCr_EET_Neighb3-IndicCr_EET==1);
-whphi2_EET_Neighb3(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb3(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EET_Neighb3-IndicCr_EET==1);
+whphi2_EET_Neighb3(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_A*whphi2_EET_Neighb3(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EET_Neighb3-IndicCr_EET==-1);
+whphi2_EET_Neighb3(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_A*whphi2_EET_Neighb3(IndPhaseSwitch_C2A);
 
 %penalty on mobility along dim 1 do not move this line elsewhere !!
 PhaseSwitch = IndicCr_EET_Neighb1-IndicCr_EET;
-IndPhaseSwitch = find(IndicCr_EET_Neighb1-IndicCr_EET==1);
-whphi2_EET_Neighb1(IndPhaseSwitch) = PostParam.Elec.kpenA2C*whphi2_EET_Neighb1(IndPhaseSwitch);
+IndPhaseSwitch_A2C = find(IndicCr_EET_Neighb1-IndicCr_EET==1);
+whphi2_EET_Neighb1(IndPhaseSwitch_A2C) = PostParam.Elec.kpenA2C_A*whphi2_EET_Neighb1(IndPhaseSwitch_A2C);
+IndPhaseSwitch_C2A = find(IndicCr_EET_Neighb1-IndicCr_EET==-1);
+whphi2_EET_Neighb1(IndPhaseSwitch_C2A) = PostParam.Elec.kpenC2A_A*whphi2_EET_Neighb1(IndPhaseSwitch_C2A);
 
 % Take the max
 whphi2_EET_AllNeighb = max(whphi2_EET_Neighb1,whphi2_EET_Neighb2);
