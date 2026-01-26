@@ -15,15 +15,15 @@ function  [ AveragedMobility ] = Struct2Prop_ElecMorphoDescr_muavg( MobilityMatr
 % Indices with non-zero mobilities, in the ETP node list
 Ind1 = find(MobilityMatrix(IndMobETP)~=0);
 % Indices within ETP and with zero mobilities, in the whole morphology node list 
-Ind2 = find(MorphETP==1 & MobilityMatrix==0);
+% Ind2 = find(MorphETP==1 & MobilityMatrix==0);
 
 % Inverse of mobility where it is non-zero
 Inversemu = zeros(size(MobilityMatrix));
 Inversemu(IndMobETP(Ind1)) = 1./MobilityMatrix(IndMobETP(Ind1)); % inverse on the non zeros values
 
-% Keep track of the nodes which are in the ETP but where the mobility is zero
-UntransportingETP = zeros(size(MobilityMatrix));
-UntransportingETP(Ind2) = 1;
+% % Keep track of the nodes which are in the ETP but where the mobility is zero
+% UntransportingETP = zeros(size(MobilityMatrix));
+% UntransportingETP(Ind2) = 1;
 
 % Number of nodes along each vertical line
 lengthETP_v=sum(MorphETP,1);
@@ -42,7 +42,7 @@ if ( Mode==1 )
     
     % Replace zero values within the ETP by a standard, very low value ('penalty') 
     InversemuBlockage = Inversemu;
-    InversemuBlockage(Ind2) = 1/penalty;
+    % InversemuBlockage(Ind2) = 1/penalty;
     % Harmonic average per column / streamline
     Vectorsum = sum(InversemuBlockage,1);
     mu_v = lengthETP_v(lengthETP_v~=0)./Vectorsum(lengthETP_v~=0);

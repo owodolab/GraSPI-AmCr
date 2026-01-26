@@ -73,7 +73,7 @@ Data = [Data,krecTrap];
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ElecDescriptorNames = {'MUeG','MUhG','KrG','ETAdG','n_M_eff','e_A_eff','e_D_eff','Pb','Pc','Nb','Nc','n','krtrapeG','krtraphG','krtrapehG'};
-index = find(MorphNames==['Morph' NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
+index = find(MorphNames==[NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
 ElecDescriptorValues = Data(index-1,:);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

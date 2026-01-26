@@ -37,10 +37,10 @@ filenameDistElec=[filenameWOext '-DistancesWhiteYellowGreyToGREEN.txt'];
 % Raw morphology data
 % ---------------------------------------------
 
-phiAMorph = importdata([NameFolderGraspi 'src_data/' filenamePhiA ]);
-phiDMorph = importdata([NameFolderGraspi 'src_data/' filenamePhiD ]);
+phiAMorph = importdata([NameFolderGraspi 'descriptors/' filenamePhiA ]);
+phiDMorph = importdata([NameFolderGraspi 'descriptors/' filenamePhiD ]);
 
-Morph =  readmatrix([NameFolderGraspi 'visualMorph2/' filename],'NumHeaderLines',1);
+Morph =  readmatrix([NameFolderGraspi 'descriptors/' filename],'NumHeaderLines',1);
 sizeMorph = size(Morph);
 NnodesMorph = numel(Morph);
 IndMixed = find(Morph==3);
@@ -62,7 +62,7 @@ MorphEHT=zeros(sizeMorph);
 % ---------------------------------------------
 
 % This is the effective electron transport phase
-EET = importdata([NameFolderGraspi 'visualMorph2/' filenameDescEET]);
+EET = importdata([NameFolderGraspi 'descriptors/' filenameDescEET]);
 EET = unique(EET,'rows'); % because I think there's a mistake in Olga's file
 if ~isempty(EET)
 	ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
@@ -72,7 +72,7 @@ IndEET=find(MorphEET==1);
 IndnotEET = find(MorphEET~=1);
 
 % This is the effective hole transport phase
-EHT=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEHT]);
+EHT=importdata([NameFolderGraspi 'descriptors/' filenameDescEHT]);
 EHT = unique(EHT,'rows'); % because I think there's a mistake in Olga's file
 if ~isempty(EHT)
 	ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
@@ -86,21 +86,21 @@ IndnotEHT = find(MorphEHT~=1);
 % ---------------------------------------------
 
 % This is the mixed part of the CETP
-DETmixed=importdata([NameFolderGraspi 'visualMorph2/' filenameDescETmixed]);
+DETmixed=importdata([NameFolderGraspi 'descriptors/' filenameDescETmixed]);
 if ~isempty(DETmixed)
 	ind = sub2ind(sizeMorph,DETmixed(:,2)+1,DETmixed(:,1)+1);
 	MorphDesc3(ind) = 2;
 end
 
 % This is the pure acceptor phase part of the CETP
-DEETacceptor=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEETacceptor]);
+DEETacceptor=importdata([NameFolderGraspi 'descriptors/' filenameDescEETacceptor]);
 if ~isempty(DEETacceptor)
 	ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
 	MorphDesc3(ind) = 1;
 end
 
 % This is the pure donor phase part of the CETP
-DEHTdonor=importdata([NameFolderGraspi 'visualMorph2/' filenameDescEHTdonor]);
+DEHTdonor=importdata([NameFolderGraspi 'descriptors/' filenameDescEHTdonor]);
 if ~isempty(DEHTdonor)
 	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
 	MorphDesc3(ind) = 3;
@@ -125,13 +125,13 @@ DistElec=zeros(sizeMorph);
 % Distances to EETP and EHTP for electrons and holes
 % ---------------------------------------------
 
-DistEHT=importdata([NameFolderGraspi 'visualMorph2/' filenameDistHole]);
+DistEHT=importdata([NameFolderGraspi 'descriptors/' filenameDistHole]);
 if ~isempty(DistEHT)
 	ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
 	DistHole(ind) = DistEHT(:,3);
 end
 
-DistEET=importdata([NameFolderGraspi 'visualMorph2/' filenameDistElec]);
+DistEET=importdata([NameFolderGraspi 'descriptors/' filenameDistElec]);
 if ~isempty(DistEET)
 	ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
 	DistElec(ind) = DistEET(:,3);
@@ -195,15 +195,6 @@ krecTrapeDesc = sum(sum(CalcKrecTrape(IndEET)))/numel(IndEET);
 CalcKrecTraph(IndEHT) = (1-phiDMorph(IndEHT));
 krecTraphDesc = sum(sum(CalcKrecTraph(IndEHT)))/numel(IndEHT);
 krecTrapehDesc = (numel(IndEET)*krecTrapeDesc + numel(IndEHT)*krecTraphDesc)/(numel(IndEET)+numel(IndEHT));
-
-% ---------------------------------------------
-% Write results in a file
-% ---------------------------------------------
-
-filenameDesc=sprintf('descKrec-%s',filename);
-fileID = fopen([NameFolderGraspi 'calculateKrec/' filenameDesc], 'w');
-fprintf(fileID, '%f\n', krecDescFinal);
-fclose(fileID);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -359,15 +350,33 @@ MobEET(IndEET) = whphi2_EET_AllNeighb(IndEET);
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Only mode 1 should be used...
 
+% Indices within ETP and with zero mobilities, in the whole morphology node list : set mobility to a minimal value (to avoid inf in the averaging)
+toto = MobEET(2:end,:);
+Ind2 = find(MorphEET(2:end,:)==1 & toto==0);
+toto(Ind2) = PostParam.Elec.MobilityAveragingMode;
+MobEET(2:end,:) = toto;
+
+% Indices within ETP and with zero mobilities, in the whole morphology node list 
+toto = MobEHT(2:end,:);
+Ind2 = find(MorphEHT(2:end,:)==1 & toto==0);
+toto(Ind2) = PostParam.Elec.MobilityAveragingMode;
+MobEHT(2:end,:) = toto;
+
+% Average
 [ MobEDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
 [ MobHDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Save the global descriptor values in a file
+% Save the global descriptor values in files
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+filenameDesc=sprintf('descKrec-%s',filename);
+fileID = fopen([NameFolderGraspi 'descriptors/' filenameDesc], 'w');
+fprintf(fileID, '%f\n', krecDescFinal);
+fclose(fileID);
+
 filenameDesc=sprintf('descMob-%s',filename);
-fileID = fopen([NameFolderGraspi 'calculateMobility/' filenameDesc], 'w');
+fileID = fopen([NameFolderGraspi 'descriptors/' filenameDesc], 'w');
 fprintf(fileID, 'effMHole: %f\n', MobHDesc);
 fprintf(fileID, 'effMEle: %f\n', MobEDesc);
 fclose(fileID);

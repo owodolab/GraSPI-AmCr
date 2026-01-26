@@ -1,20 +1,21 @@
-function [ status ] = Struct2Prop_ElecMorphoDescr_Morpho2Graspi( NameFolderGraspi, NameFile, PostParam, Inputs )
+function [ status ] = Struct2Prop_ElecMorphoDescr_Morpho2Graspi( NameFolderGraspi, NameWorkflowSave, numworkflow, NameMorpho, PostParam, Inputs )
 
 % -------------------------------------------------------------------------
 % Load File
 % -------------------------------------------------------------------------
 
-NameFileWoExt = extractBefore(NameFile, ".");
+load([NameWorkflowSave NameMorpho '_MorphoPreProc']);
 
-MorphFileName = sprintf('Morph%s.txt',NameFileWoExt);
-PhiDFileName = sprintf('Morph%s-phiD.txt',NameFileWoExt);
-PhiAFileName = sprintf('Morph%s-phiA.txt',NameFileWoExt);
+NameFileWoExt = [NameMorpho '_wf_' num2str(numworkflow)];
+
+MorphFileName = sprintf('%s.txt',NameFileWoExt);
+PhiDFileName = sprintf('%s-phiD.txt',NameFileWoExt);
+PhiAFileName = sprintf('%s-phiA.txt',NameFileWoExt);
 
 % -------------------------------------------------------------------------
 % Relabelling
 % -------------------------------------------------------------------------
 
-load([NameFolderGraspi 'src_data/' NameFile]);
 nxyz = MorphoPreProc.nxyz;
 FlagBC = Inputs.Mesh.FlagBC;
 LabelsImg=reshape(MorphoPreProc.PhaseType,nxyz(1),nxyz(3));
@@ -50,7 +51,7 @@ end
 % Write files
 % -------------------------------------------------------------------------
 
-fileID = fopen([NameFolderGraspi 'src_data/' MorphFileName],'w');
+fileID = fopen([NameFolderGraspi 'descriptors/' MorphFileName],'w');
 fprintf(fileID,'%d %d \n',width,height);
 fprintf(fileID, [repmat('%d ', 1, size(Img2save,1)) '\n'], Img2save) ;
 fclose(fileID);
@@ -58,13 +59,13 @@ fclose(fileID);
 
 phiDMorph=reshape(MorphoPreProc.PreProFields(:,1),nxyz(1),nxyz(3));
 phiDMorphcrop=phiDMorph(:,1:height);
-fileIDphiD = fopen([NameFolderGraspi 'src_data/' PhiDFileName],'w');
+fileIDphiD = fopen([NameFolderGraspi 'descriptors/' PhiDFileName],'w');
 fprintf(fileIDphiD, [repmat('%d ', 1, size(phiDMorphcrop,1)) '\n'], phiDMorphcrop) ;
 fclose(fileIDphiD);
 
 phiAMorph=reshape(MorphoPreProc.PreProFields(:,2),nxyz(1),nxyz(3));
 phiAMorphcrop=phiAMorph(:,1:height);
-fileIDphiA = fopen([NameFolderGraspi 'src_data/' PhiAFileName],'w');
+fileIDphiA = fopen([NameFolderGraspi 'descriptors/' PhiAFileName],'w');
 fprintf(fileIDphiA, [repmat('%d ', 1, size(phiAMorphcrop,1)) '\n'], phiAMorphcrop) ;
 fclose(fileIDphiA);
 

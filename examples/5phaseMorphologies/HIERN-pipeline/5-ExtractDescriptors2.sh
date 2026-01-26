@@ -2,10 +2,14 @@
 
 MAINDIR=$PWD
 
+#DESCS="$MAINDIR/descriptors"
+#KREC="$MAINDIR/calculateKrec"
+#VIS="$MAINDIR/visualizeData"
+#MOB="$MAINDIR/calculateMobility"
 DESCS="$MAINDIR/descriptors"
-KREC="$MAINDIR/calculateKrec"
-VIS="$MAINDIR/visualizeData"
-MOB="$MAINDIR/calculateMobility"
+KREC="$MAINDIR/descriptors"
+VIS="$MAINDIR/descriptors"
+MOB="$MAINDIR/descriptors"
 NAMEDESC=`cut -d':' -f1 descriptors/descriptors.MorphFields_sv99_MorphoDesc.log | paste -sd ' ' - `
 
 #echo "name MUeG MUhG krG ETA_dG $NAMEDESC "> $VIS/AllDescriptors.txt
