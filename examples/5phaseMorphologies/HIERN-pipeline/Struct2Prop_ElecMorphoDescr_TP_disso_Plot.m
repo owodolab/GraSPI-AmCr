@@ -42,11 +42,11 @@ customEET = [1 1 1;    % 0- White
 % Image of the phase type
 % ---------------------------------------------
 
-imagesc(Morph);
-colormap(customMap);
-caxis([0 7]);
-imageFilename=sprintf('%s-M.png', filenameWOext);
-print([NameFolderGraspi 'visualMorph2/' imageFilename],'-dpng');
+% imagesc(Morph);
+% colormap(customMap);
+% caxis([0 7]);
+% imageFilename=sprintf('%s-M.png', filenameWOext);
+% print([NameFolderGraspi 'visualMorph2/' imageFilename],'-dpng');
 
 % ---------------------------------------------
 % Image of region common to both effective transport phases (CETP)

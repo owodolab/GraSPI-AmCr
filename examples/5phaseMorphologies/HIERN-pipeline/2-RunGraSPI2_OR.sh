@@ -1,6 +1,7 @@
 #!/bin/bash
 
 MAINDIR=$PWD
+#MAINDIR=$2
 
 PIXELSIZE=1
 
@@ -10,14 +11,15 @@ GRASPI5Phases=$1
 
 #DATA="$MAINDIR/src_data"
 #DISTANCES="$MAINDIR/distances"
-DESCS="$MAINDIR/descriptors"
+#DESCS="$MAINDIR/descriptors"
+DESCS=$2
 #VISMORPH="$MAINDIR/visualMorph2"
 
 cd $DESCS
 
 f=0;
 #for i in Morph*sv_1.txt; do
-for i in $2; do
+for i in $3; do
     f=$(($f + 1))
     FILENAME=$i
  
@@ -26,7 +28,7 @@ for i in $2; do
     echo "analyzing file $FILENAME"
     #$GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 > $DESCS/descriptors.$BASEFILENAME.log
     #$GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD 15 -ldA 40 > $DESCS/descriptors.$BASEFILENAME.log
-    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD $3 -ldA $4 > $DESCS/descriptors.$BASEFILENAME.log
+    $GRASPI5Phases -a ${FILENAME} -p 1 -s ${PIXELSIZE} -n 5 -ldD $4 -ldA $5 > $DESCS/descriptors.$BASEFILENAME.log
 
     #cp ${BASEFILENAME}-phiA.txt $DESCS/
     #cp ${BASEFILENAME}-phiD.txt $DESCS/

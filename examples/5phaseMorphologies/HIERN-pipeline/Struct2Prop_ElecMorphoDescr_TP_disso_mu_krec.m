@@ -1,4 +1,4 @@
-function [ MorphoElecAnalysis ] = Struct2Prop_ElecMorphoDescr_TP_disso_mu_krec( inputFile, NameFolderGraspi, PostParam )
+function [ MorphoElecAnalysis ] = Struct2Prop_ElecMorphoDescr_TP_disso_mu_krec( inputFile, NameFolderDataGraspi, PostParam )
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,10 +37,10 @@ filenameDistElec=[filenameWOext '-DistancesWhiteYellowGreyToGREEN.txt'];
 % Raw morphology data
 % ---------------------------------------------
 
-phiAMorph = importdata([NameFolderGraspi 'descriptors/' filenamePhiA ]);
-phiDMorph = importdata([NameFolderGraspi 'descriptors/' filenamePhiD ]);
+phiAMorph = importdata([NameFolderDataGraspi filenamePhiA ]);
+phiDMorph = importdata([NameFolderDataGraspi filenamePhiD ]);
 
-Morph =  readmatrix([NameFolderGraspi 'descriptors/' filename],'NumHeaderLines',1);
+Morph =  readmatrix([NameFolderDataGraspi filename],'NumHeaderLines',1);
 sizeMorph = size(Morph);
 NnodesMorph = numel(Morph);
 IndMixed = find(Morph==3);
@@ -62,7 +62,7 @@ MorphEHT=zeros(sizeMorph);
 % ---------------------------------------------
 
 % This is the effective electron transport phase
-EET = importdata([NameFolderGraspi 'descriptors/' filenameDescEET]);
+EET = importdata([NameFolderDataGraspi filenameDescEET]);
 EET = unique(EET,'rows'); % because I think there's a mistake in Olga's file
 if ~isempty(EET)
 	ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
@@ -72,7 +72,7 @@ IndEET=find(MorphEET==1);
 IndnotEET = find(MorphEET~=1);
 
 % This is the effective hole transport phase
-EHT=importdata([NameFolderGraspi 'descriptors/' filenameDescEHT]);
+EHT=importdata([NameFolderDataGraspi filenameDescEHT]);
 EHT = unique(EHT,'rows'); % because I think there's a mistake in Olga's file
 if ~isempty(EHT)
 	ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
@@ -86,21 +86,21 @@ IndnotEHT = find(MorphEHT~=1);
 % ---------------------------------------------
 
 % This is the mixed part of the CETP
-DETmixed=importdata([NameFolderGraspi 'descriptors/' filenameDescETmixed]);
+DETmixed=importdata([NameFolderDataGraspi filenameDescETmixed]);
 if ~isempty(DETmixed)
 	ind = sub2ind(sizeMorph,DETmixed(:,2)+1,DETmixed(:,1)+1);
 	MorphDesc3(ind) = 2;
 end
 
 % This is the pure acceptor phase part of the CETP
-DEETacceptor=importdata([NameFolderGraspi 'descriptors/' filenameDescEETacceptor]);
+DEETacceptor=importdata([NameFolderDataGraspi filenameDescEETacceptor]);
 if ~isempty(DEETacceptor)
 	ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
 	MorphDesc3(ind) = 1;
 end
 
 % This is the pure donor phase part of the CETP
-DEHTdonor=importdata([NameFolderGraspi 'descriptors/' filenameDescEHTdonor]);
+DEHTdonor=importdata([NameFolderDataGraspi filenameDescEHTdonor]);
 if ~isempty(DEHTdonor)
 	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
 	MorphDesc3(ind) = 3;
@@ -125,13 +125,13 @@ DistElec=zeros(sizeMorph);
 % Distances to EETP and EHTP for electrons and holes
 % ---------------------------------------------
 
-DistEHT=importdata([NameFolderGraspi 'descriptors/' filenameDistHole]);
+DistEHT=importdata([NameFolderDataGraspi filenameDistHole]);
 if ~isempty(DistEHT)
 	ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
 	DistHole(ind) = DistEHT(:,3);
 end
 
-DistEET=importdata([NameFolderGraspi 'descriptors/' filenameDistElec]);
+DistEET=importdata([NameFolderDataGraspi filenameDistElec]);
 if ~isempty(DistEET)
 	ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
 	DistElec(ind) = DistEET(:,3);
@@ -371,12 +371,12 @@ MobEHT(2:end,:) = toto;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 filenameDesc=sprintf('descKrec-%s',filename);
-fileID = fopen([NameFolderGraspi 'descriptors/' filenameDesc], 'w');
+fileID = fopen([NameFolderDataGraspi filenameDesc], 'w');
 fprintf(fileID, '%f\n', krecDescFinal);
 fclose(fileID);
 
 filenameDesc=sprintf('descMob-%s',filename);
-fileID = fopen([NameFolderGraspi 'descriptors/' filenameDesc], 'w');
+fileID = fopen([NameFolderDataGraspi filenameDesc], 'w');
 fprintf(fileID, 'effMHole: %f\n', MobHDesc);
 fprintf(fileID, 'effMEle: %f\n', MobEDesc);
 fclose(fileID);

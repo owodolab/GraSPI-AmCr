@@ -41,12 +41,12 @@ customEET = [1 1 1;    % 0- White
 % Image of the phase type
 % ---------------------------------------------
 
-imagesc(Morph(end:-1:1,:));
-colormap(customMap);
-caxis([0 7]);
-imageFilename=sprintf('%s-M.png' , filenameWOext);
-print([NameFolderGraspi 'calculateKrec/' imageFilename],'-dpng');
-pause(1)
+% imagesc(Morph(end:-1:1,:));
+% colormap(customMap);
+% caxis([0 7]);
+% imageFilename=sprintf('%s-M.png' , filenameWOext);
+% print([NameFolderGraspi 'calculateKrec/' imageFilename],'-dpng');
+% pause(1)
 
 % ---------------------------------------------
 % Figures of local hole mobility

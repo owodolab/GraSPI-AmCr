@@ -6,13 +6,20 @@ MAINDIR=$PWD
 #KREC="$MAINDIR/calculateKrec"
 #VIS="$MAINDIR/visualizeData"
 #MOB="$MAINDIR/calculateMobility"
-DESCS="$MAINDIR/descriptors"
-KREC="$MAINDIR/descriptors"
-VIS="$MAINDIR/descriptors"
-MOB="$MAINDIR/descriptors"
+#DESCS="$MAINDIR/descriptors"
+#KREC="$MAINDIR/descriptors"
+#VIS="$MAINDIR/descriptors"
+#MOB="$MAINDIR/descriptors"
+DESCS=$2
+KREC=$2
+VIS=$2
+MOB=$2
 NAMEDESC=`cut -d':' -f1 descriptors/descriptors.MorphFields_sv99_MorphoDesc.log | paste -sd ' ' - `
 
 #echo "name MUeG MUhG krG ETA_dG $NAMEDESC "> $VIS/AllDescriptors.txt
+echo $1
+echo $2
+echo $3
 
 for i in $DESCS/*$1.log; do
     filename=$i
@@ -63,7 +70,7 @@ for i in $DESCS/*$1.log; do
     echo "MUeG: $MUeG"
     echo "ETAdG: $ETAdG"
     #echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $VIS/AllDescriptors.txt
-    echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $2
+    echo "$filenameWOext ${MUeG} ${MUhG} ${KrG} ${ETAdG} $LOCALDESC " >> $3
 
 done
 
