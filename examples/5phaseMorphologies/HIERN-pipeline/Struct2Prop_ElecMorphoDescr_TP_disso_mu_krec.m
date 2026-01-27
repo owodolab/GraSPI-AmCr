@@ -264,6 +264,7 @@ whphi2_EET(IndnotEET) = 0;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Calculation of highest mobilities depending on the hopping direction
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For those who wonder: the consistency of charge transport direction and circshift signs has been checked and rechecked
 
 % Crystallinity indicator
 IndicCr_EHT = zeros(size(Morph));
@@ -274,8 +275,9 @@ IndicCr_EET(IndAcr) = 1;
 % ---------------------------------------------
 % Local hole mobilities in the EHTP
 % ---------------------------------------------
-
 % Calculate mobility for direct neighbour, holes, transport in direction of increasing row subscripts
+% Hole collecting electrode (anode) is at the highest row, row=nzmax+1
+% On images, the anode is at the top, though
 
 % Direct neighbour: circshift along dim 1, negative shift
 whphi2_EHT_Neighb1 = circshift(whphi2_EHT,-1,1);
@@ -319,8 +321,9 @@ MobEHT(IndEHT) = whphi2_EHT_AllNeighb(IndEHT);
 % ---------------------------------------------
 % Local electron mobilities in the EETP
 % ---------------------------------------------
-
-% Calculate mobility for direct neighbour, holes, transport in direction of decreasing row subscripts
+% Calculate mobility for direct neighbour, electrons, transport in direction of decreasing row subscripts
+% Electron collecting electrode (cathode) is at the lowest row, row=1
+% On images, the cathode is at the bottom, though
 
 % then circshift along dim 1, positive shift
 whphi2_EET_Neighb1 = circshift(whphi2_EET,1,1);

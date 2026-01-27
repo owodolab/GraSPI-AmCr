@@ -1,4 +1,4 @@
-function [ status ] = Struct2Prop_ElecMorphoDescr_Morpho2Graspi( NameFolderDataGraspi, NameWorkflowSave, numworkflow, NameMorpho, PostParam, Inputs )
+function [ status ] = Struct2Prop_ElecMorphoDescr_Morpho2Graspi( NameFolderDataGraspi, NameWorkflowSave, numworkflow, NameMorpho, Inputs )
 
 % -------------------------------------------------------------------------
 % Load File
@@ -11,9 +11,6 @@ NameFileWoExt = [NameMorpho '_wf_' num2str(numworkflow)];
 MorphFileName = sprintf('%s.txt',NameFileWoExt);
 PhiDFileName = sprintf('%s-phiD.txt',NameFileWoExt);
 PhiAFileName = sprintf('%s-phiA.txt',NameFileWoExt);
-
-% NameFolderDataGraspi = [NameFolderGraspi 'descriptors/'];
-% NameFolderDataGraspi = [NameWorkflowSave 'DataGraspi'];
 
 % -------------------------------------------------------------------------
 % Relabelling
