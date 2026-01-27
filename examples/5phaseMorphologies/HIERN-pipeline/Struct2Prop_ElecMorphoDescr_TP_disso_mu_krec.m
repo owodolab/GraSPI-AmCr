@@ -42,7 +42,7 @@ phiDMorph = importdata([NameFolderDataGraspi filenamePhiD ]);
 
 Morph =  readmatrix([NameFolderDataGraspi filename],'NumHeaderLines',1);
 sizeMorph = size(Morph);
-NnodesMorph = numel(Morph);
+Ntot = numel(Morph);
 IndMixed = find(Morph==3);
 IndDam = find(Morph==0);
 IndDcr = find(Morph==5);
@@ -81,6 +81,10 @@ end
 IndEHT=find(MorphEHT==1);
 IndnotEHT = find(MorphEHT~=1);
 
+Neetp = numel(IndEET);
+Nehtp = numel(IndEHT);
+Neetpehtp = numel(union(IndEET,IndEHT));
+
 % ---------------------------------------------
 % The CETP
 % ---------------------------------------------
@@ -105,6 +109,9 @@ if ~isempty(DEHTdonor)
 	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
 	MorphDesc3(ind) = 3;
 end
+
+IndCETP = find(MorphDesc3==2); % finds the nodes in the Common region to effective transport phases (CRETP)
+Ncetp = numel(IndCETP);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,20 +150,28 @@ end
 
 Induseful=find(MorphDesc3~=0);
 
-DissoEfficiency =-1*ones(sizeMorph);
+% DissoEfficiency =-1*ones(sizeMorph);
+DissoEfficiency = zeros(sizeMorph);
 
-IndCRETP = find(MorphDesc3==2); % finds the nodes in the Common region to effective transport phases (CRETP)
-IndAcceptornoETP=find(((Morph == 1 ) | (Morph == 7 )) & (MorphEET==0)); %finds acceptor phase outside EETP (Electron effective transport phase)
-IndDonornoETP=find(((Morph == 0 ) | (Morph == 5 ) ) & (MorphEHT==0));  %finds donor phase outside EHTP (Hole  effective transport phase)
-IndmixednoETP=find(((Morph == 3 ) | (MorphEET == 0 ) ) & (MorphEHT==0)); % finds mixed phase outside both effective transport phases (EHTP and EETP)
+DissoEfficiency(IndEHT) = exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
+DissoEfficiency(IndEET) = exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
+DissoEfficiency(IndCETP) = 1;
 
-DissoEfficiency(IndEHT)=exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
-DissoEfficiency(IndEET)=exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
-DissoEfficiency(IndCRETP)=1;
+% IndAcceptornoETP = find(((Morph == 1 ) | (Morph == 7 )) & (MorphEET==0)); %finds acceptor phase outside EETP (Electron effective transport phase)
+% IndDonornoETP = find(((Morph == 0 ) | (Morph == 5 ) ) & (MorphEHT==0));  %finds donor phase outside EHTP (Hole  effective transport phase)
+% IndmixednoETP = find(((Morph == 3 ) | (MorphEET == 0 ) ) & (MorphEHT==0)); % finds mixed phase outside both effective transport phases (EHTP and EETP)
 
-DissoEfficiency(IndAcceptornoETP)=0;
-DissoEfficiency(IndDonornoETP)=0;
-DissoEfficiency(IndmixednoETP)=0;
+% DissoEfficiency(IndAcceptornoETP) = 0;
+% DissoEfficiency(IndDonornoETP) = 0;
+% DissoEfficiency(IndmixednoETP) = 0;
+
+Etadm = mean(mean(DissoEfficiency));
+
+DissoPa = sum(DissoEfficiency(IndCETP));
+IndEHTPnoCETP = setdiff(IndEHT,IndCETP);
+DissoPb = sum(DissoEfficiency(IndEHTPnoCETP));
+IndEETPnoCETP = setdiff(IndEET,IndCETP);
+DissoPc = sum(DissoEfficiency(IndEETPnoCETP));
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,8 +193,7 @@ CalcKrecTraph = zeros(sizeMorph);
 
 IndET = find(MorphDesc3~=0); % finds the nodes in the effective transport phases (EETP or EHTP)
 CalcKrecFinal(IndET) = 4*phiAMorph(IndET).*phiDMorph(IndET);
-Neetpehtp = numel(union(IndEET,IndEHT));
-krecDescFinal = sum(sum(CalcKrecFinal))/Neetpehtp;
+krecm = sum(sum(CalcKrecFinal))/Neetpehtp;
 
 % Associated fields for plots
 krecDescPlot=-1*ones(size(CalcKrecFinal));
@@ -191,10 +205,10 @@ krecDescPlot(IndEET)=CalcKrecFinal(IndEET);
 % ---------------------------------------------
 
 CalcKrecTrape(IndEET) = (1-phiAMorph(IndEET));
-krecTrapeDesc = sum(sum(CalcKrecTrape(IndEET)))/numel(IndEET);
+krecTrapem = sum(sum(CalcKrecTrape(IndEET)))/Neetp;
 CalcKrecTraph(IndEHT) = (1-phiDMorph(IndEHT));
-krecTraphDesc = sum(sum(CalcKrecTraph(IndEHT)))/numel(IndEHT);
-krecTrapehDesc = (numel(IndEET)*krecTrapeDesc + numel(IndEHT)*krecTraphDesc)/(numel(IndEET)+numel(IndEHT));
+krecTraphm = sum(sum(CalcKrecTraph(IndEHT)))/Nehtp;
+krecTrapehm = (Neetp*krecTrapem + Nehtp*krecTraphm)/(Neetp+Nehtp);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,8 +377,8 @@ toto(Ind2) = PostParam.Elec.MobilityAveragingMode;
 MobEHT(2:end,:) = toto;
 
 % Average
-[ MobEDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
-[ MobHDesc ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
+[ Muem ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
+[ Muhm ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Save the global descriptor values in files
@@ -372,13 +386,13 @@ MobEHT(2:end,:) = toto;
 
 filenameDesc=sprintf('descKrec-%s',filename);
 fileID = fopen([NameFolderDataGraspi filenameDesc], 'w');
-fprintf(fileID, '%f\n', krecDescFinal);
+fprintf(fileID, '%f\n', krecm);
 fclose(fileID);
 
 filenameDesc=sprintf('descMob-%s',filename);
 fileID = fopen([NameFolderDataGraspi filenameDesc], 'w');
-fprintf(fileID, 'effMHole: %f\n', MobHDesc);
-fprintf(fileID, 'effMEle: %f\n', MobEDesc);
+fprintf(fileID, 'effMHole: %f\n', Muhm);
+fprintf(fileID, 'effMEle: %f\n', Muem);
 fclose(fileID);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -541,27 +555,41 @@ HEffdepMobEET(Indnonode)=0;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Fields
 MorphoElecAnalysis.PhaseType.Morph = Morph;
 MorphoElecAnalysis.PhaseType.MorphDesc3 = MorphDesc3;
 MorphoElecAnalysis.PhaseType.MorphEET = MorphEET;
 MorphoElecAnalysis.PhaseType.MorphEHT = MorphEHT;
-MorphoElecAnalysis.PhaseType.IndEHT = IndEHT;
-MorphoElecAnalysis.PhaseType.IndEET = IndEET;
 MorphoElecAnalysis.Dissociation.DistHole = DistHole;
 MorphoElecAnalysis.Dissociation.DistElec = DistElec;
 MorphoElecAnalysis.Dissociation.DissoEfficiency = DissoEfficiency;
 MorphoElecAnalysis.Recombination.CalcKrecFinal = CalcKrecFinal;
 MorphoElecAnalysis.Recombination.krecDescPlot = krecDescPlot;
-MorphoElecAnalysis.Recombination.krecDescFinal = krecDescFinal;
 MorphoElecAnalysis.Recombination.CalcKrecTrape = CalcKrecTrape;
-MorphoElecAnalysis.Recombination.krecTrapeDesc = krecTrapeDesc;
 MorphoElecAnalysis.Recombination.CalcKrecTraph = CalcKrecTraph;
-MorphoElecAnalysis.Recombination.krecTraphDesc = krecTraphDesc;
-MorphoElecAnalysis.Recombination.krecTrapehDesc = krecTrapehDesc;
 MorphoElecAnalysis.Mobilities.MobEHT = MobEHT;
 MorphoElecAnalysis.Mobilities.MobEET = MobEET;
-MorphoElecAnalysis.Mobilities.MobEDesc = MobEDesc;
-MorphoElecAnalysis.Mobilities.MobHDesc = MobHDesc;
+
+% Indices (useful later for plots only)
+MorphoElecAnalysis.PhaseType.IndEHT = IndEHT;
+MorphoElecAnalysis.PhaseType.IndEET = IndEET;
+
+% Average / integrated values
+MorphoElecAnalysis.PhaseType.Ntot = Ntot;
+MorphoElecAnalysis.PhaseType.Neetpehtp = Neetpehtp;
+MorphoElecAnalysis.PhaseType.Neetp = Neetp;
+MorphoElecAnalysis.PhaseType.Nehtp = Nehtp;
+MorphoElecAnalysis.PhaseType.Ncetp = Ncetp;
+MorphoElecAnalysis.Dissociation.DissoPa = DissoPa;
+MorphoElecAnalysis.Dissociation.DissoPb = DissoPb;
+MorphoElecAnalysis.Dissociation.DissoPc = DissoPc;
+MorphoElecAnalysis.Dissociation.Etadm = Etadm;
+MorphoElecAnalysis.Recombination.krecm = krecm;
+MorphoElecAnalysis.Recombination.krecTrapem = krecTrapem;
+MorphoElecAnalysis.Recombination.krecTraphm = krecTraphm;
+MorphoElecAnalysis.Recombination.krecTrapehm = krecTrapehm;
+MorphoElecAnalysis.Mobilities.Muem = Muem;
+MorphoElecAnalysis.Mobilities.Muhm = Muhm;
 
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Figures
