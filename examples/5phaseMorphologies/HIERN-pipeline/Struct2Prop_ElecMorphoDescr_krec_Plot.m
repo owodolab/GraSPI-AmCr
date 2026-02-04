@@ -48,18 +48,24 @@ customEET = [1 1 1;    % 0- White
 % print([NameFolderGraspi 'calculateKrec/' imageFilename],'-dpng');
 % pause(1)
 
+nxyz = zeros(3,1);
+[nxyz(1),nxyz(3)]=size(krecDescPlot);
+x = 0:nxyz(1);   % 21 x-coordinates
+y = 0:nxyz(3);   % 11 y-coordinates
+[X, Y] = meshgrid(x, y);
+Zpad = zeros(nxyz(1)+1,nxyz(3)+1);
+
 % ---------------------------------------------
 % Bimolecular recombination prefactor
 % ---------------------------------------------
 
+Variable=reshape(krecDescPlot,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
 colormap([[1 1 1];jet(100)]);
-Zpad = [krecDescPlot; krecDescPlot(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(krecDescPlot);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
@@ -67,24 +73,26 @@ caxis([-0.01 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar;
-imageFilename=sprintf('_10_%s_krec', filenameWOext);
+% set(gca,'colorscale','log')
+% caxis([1e-3 1])
 
+imageFilename=sprintf('_10_%s_krec', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename '.fig'])
-pause(1)
+
+pause(0.2)
 
 % ---------------------------------------------
 % Trap recombination prefactors
 % ---------------------------------------------
 
+Variable=reshape(CalcKrecTrape,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
 colormap([[1 1 1];jet(100)]);
-Zpad = [CalcKrecTrape; CalcKrecTrape(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(CalcKrecTrape);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
@@ -92,20 +100,22 @@ caxis([-0.01 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar;
+set(gca,'colorscale','log')
+caxis([1e-3 1])
+
 imageFilename=sprintf('_11_%s_krectrape', filenameWOext);
-
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename '.fig'])
-pause(1)
+
+pause(0.2)
+
+Variable=reshape(CalcKrecTraph,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
 figure;
 colormap([[1 1 1];jet(100)]);
-Zpad = [CalcKrecTraph; CalcKrecTraph(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(CalcKrecTraph);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
@@ -113,11 +123,14 @@ caxis([-0.01 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar;
-imageFilename=sprintf('_12_%s_krectraph', filenameWOext);
+set(gca,'colorscale','log')
+caxis([1e-3 1])
 
+imageFilename=sprintf('_12_%s_krectraph', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename '.fig'])
-pause(1)
+
+pause(0.2)
 
 close all;
 

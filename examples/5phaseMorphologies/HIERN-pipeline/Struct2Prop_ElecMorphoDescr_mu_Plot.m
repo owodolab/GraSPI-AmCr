@@ -48,65 +48,70 @@ customEET = [1 1 1;    % 0- White
 % print([NameFolderGraspi 'calculateKrec/' imageFilename],'-dpng');
 % pause(1)
 
+nxyz = zeros(3,1);
+[nxyz(1),nxyz(3)]=size(MobEHT);
+x = 0:nxyz(1);   % 21 x-coordinates
+y = 0:nxyz(3);   % 11 y-coordinates
+[X, Y] = meshgrid(x, y);
+Zpad = zeros(nxyz(1)+1,nxyz(3)+1);
+
 % ---------------------------------------------
 % Figures of local hole mobility
 % ---------------------------------------------
 
-figure;
-%     imagesc(MobEHT(end:-1:1,:));
 Mobplot=-1*ones(size(MobEHT));
 Mobplot(IndEHT)=MobEHT(IndEHT);
-Zpad = [Mobplot; Mobplot(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(MobEHT);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+Variable=reshape(Mobplot,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
+figure;
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
-%     axis ([0.5:10.5 0.5 20.5])
 caxis([-0.01 1]);
-%    colormap(customMapDesc);
 colormap([ [1 1 1] ;jet(100)]);
 colorbar;
+set(gca,'colorscale','log')
+caxis([1e-3 1])
 xlabel('z [nm]')
 ylabel('x [nm]')
 
 imageFilename=sprintf('_13_%s_MobHole', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename '.fig'])
 
-pause(1)
+pause(0.2);
 
 % ---------------------------------------------
 % Figures of local electron mobility
 % ---------------------------------------------
 
-figure;
 Mobplot=-1*ones(size(MobEET));
 Mobplot(IndEET)=MobEET(IndEET);
-%     imagesc(MobEET(end:-1:1,:));
-Zpad = [Mobplot; Mobplot(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(Mobplot);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+Variable=reshape(Mobplot,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
+figure;
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
 caxis([-0.01 1]);
+colormap([ [1 1 1] ;jet(100)]);
 colorbar;
+set(gca,'colorscale','log')
+caxis([1e-3 1])
 xlabel('z [nm]')
 ylabel('x [nm]')
-colormap([ [1 1 1] ;jet(100)]);
 
 imageFilename=sprintf('_14_%s_MobElec', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename '.fig'])
 
-pause(1)
+pause(0.2);
 
 % % ---------------------------------------------
 % % Figures of line-averaged electron and hole mobilities (a priori useless)

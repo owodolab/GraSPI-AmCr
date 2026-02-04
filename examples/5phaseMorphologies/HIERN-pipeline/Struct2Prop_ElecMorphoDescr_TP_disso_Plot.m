@@ -48,51 +48,55 @@ customEET = [1 1 1;    % 0- White
 % imageFilename=sprintf('%s-M.png', filenameWOext);
 % print([NameFolderGraspi 'visualMorph2/' imageFilename],'-dpng');
 
+nxyz = zeros(3,1);
+[nxyz(1),nxyz(3)]=size(MorphDesc3);
+x = 0:nxyz(1);   % 21 x-coordinates
+y = 0:nxyz(3);   % 11 y-coordinates
+[X, Y] = meshgrid(x, y);
+Zpad = zeros(nxyz(1)+1,nxyz(3)+1);
+
 % ---------------------------------------------
 % Image of region common to both effective transport phases (CETP)
 % ---------------------------------------------
 % Sure about that???
 
-figure;
-%     hIm=imagesc(0.5:1:x+0.5,0.5:1:y-0.5,MorphDesc3);
-Zpad = [MorphDesc3; MorphDesc3(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(MorphDesc3);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
-surf(X,Y,Zpad','EdgeColor','none')
-view(90,270)
-axis equal tight
-%     caxis([0 3]);
-caxis([0 1]);
-xlabel('z [nm]')
-ylabel('x [nm]')
 myColors = [
     1 1 1;         % 0 white
     153/255 153/255 255/255      % non-zero purple
     ];
-colormap(myColors)
-%     colormap(customMapDesc);
-%     colorbar
-imageFilename=sprintf('_4_%s_CETP.png', filenameWOext);
-print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
-pause(1);
+Variable=reshape(MorphDesc3,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
+figure;
+set(gcf,'Color','w')
+surf(X,Y,Zpad','EdgeColor','none')
+view(90,270)
+axis equal tight
+caxis([0 1]);
+xlabel('z [nm]')
+ylabel('x [nm]')
+colormap(myColors)
+
+imageFilename = sprintf('_4_%s_CETP', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
+print([NameWorkflowSave imageFilename],'-dpng');
+
+pause(0.2);
 
 % ---------------------------------------------
 % Image of effective electron transport phases (EETP)
 % ---------------------------------------------
 
+Variable=reshape(MorphEET,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
-%     hIm=imagesc(MorphEET(end:-1:1,:));
-Zpad = [MorphEET; MorphEET(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(MorphEET);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
@@ -100,24 +104,24 @@ caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colormap(customEET);
-imageFilename=sprintf('_5_%s_EETP.png', filenameWOext);
-print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
-pause(1);
+imageFilename=sprintf('_5_%s_EETP', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
+print([NameWorkflowSave imageFilename],'-dpng');
+
+pause(0.2);
 
 % ---------------------------------------------
 % Image of effective hole transport phases (EETP)
 % ---------------------------------------------
 
+Variable=reshape(MorphEHT,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
-%     hIm=imagesc(MorphEHT(end:-1:1,:));
-Zpad = [MorphEHT; MorphEHT(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(MorphEHT);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
@@ -125,92 +129,89 @@ caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colormap(customEHT);
-imageFilename=sprintf('_6_%s_EHTP.png', filenameWOext);
+imageFilename=sprintf('_6_%s_EHTP', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
-pause(1);
+pause(0.2);
 
 % ---------------------------------------------
 % Image of distance between exciton and EHTP
 % ---------------------------------------------
 
+Variable=reshape(DistHole,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
-%     hIm=imagesc(DistHole(end:-1:1,:));
-Zpad = [DistHole; DistHole(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(DistHole);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
-caxis([0 20]);
-%     colormap(customMapDesc);
+caxis([0 35]);
 xlabel('z [nm]')
 ylabel('x [nm]')
 colorbar
-colormap(jet(21));
-imageFilename=sprintf('_7_%s_DistHol.png', filenameWOext);
+% colormap(jet);
+imageFilename=sprintf('_7_%s_DistHol', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
 print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
-pause(1);
+pause(0.2);
 
 % ---------------------------------------------
 % Image of distance between exciton and EETP
 % ---------------------------------------------
 
+Variable=reshape(DistElec,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
-%    hIm=imagesc(DistElec);
-Zpad = [DistElec; DistElec(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(DistElec);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
 view(90,270)
 axis equal tight
 caxis([0 20]);
 colorbar
-%    colormap(customMapDesc);
-colormap(jet(100));
+colormap(feval('jet'));
 xlabel('z [nm]')
 ylabel('x [nm]')
-imageFilename=sprintf('_8_%s_DistElec.png', filenameWOext);
-print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave imageFilename(1:end-4) '.fig'])
 
-pause(1);
+imageFilename=sprintf('_8_%s_DistElec', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
+print([NameWorkflowSave imageFilename],'-dpng');
+
+pause(0.2);
 
 % ---------------------------------------------
 % Image of exciton diffusion efficiency
 % ---------------------------------------------
 
+Variable=reshape(DissoEfficiency,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
 figure;
-%    hIm=imagesc(DistElec);
-Zpad = [DissoEfficiency; DissoEfficiency(end,:)];         % Repeat last row
-Zpad = [Zpad, Zpad(:,end)];             % Repeat last column
-[a,b]=size(DissoEfficiency);
-x = 0:a;   % 21 x-coordinates
-y = 0:b;   % 11 y-coordinates
-[X, Y] = meshgrid(x, y);
+set(gcf,'Color','w')
+
 surf(X,Y,Zpad','EdgeColor','none');
 view(90,270)
 axis equal tight
 caxis([-0.01 1]);
 colorbar
-%    colormap(customMapDesc);
 xlabel('z [nm]')
 ylabel('x [nm]')
-colormap([ [1 1 1]; jet(121)]);
-imageFilename=sprintf('_9_%s_DissoEfficiency.png', filenameWOext);
-print([NameWorkflowSave imageFilename],'-dpng');
-savefig([NameWorkflowSave  imageFilename(1:end-4) '.fig'])
+% colormap([ [1 1 1]; jet(121)]);
 
-pause(1);
+imageFilename=sprintf('_9_%s_DissoEfficiency', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
+print([NameWorkflowSave imageFilename],'-dpng');
+
+pause(0.2);
 
 close all;
 
