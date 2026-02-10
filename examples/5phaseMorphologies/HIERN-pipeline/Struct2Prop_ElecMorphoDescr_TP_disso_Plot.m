@@ -1,4 +1,4 @@
-function [ status ] = Struct2Prop_ElecMorphoDescr_TP_disso_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc3, MorphEET, MorphEHT, DistHole, DistElec, DissoEfficiency )
+function [ status ] = Struct2Prop_ElecMorphoDescr_TP_disso_Plot( inputFile, NameWorkflowSave, NameFolderGraspi, Morph, MorphDesc3, MorphEET, MorphEHT, IndEET, IndEHT, DistHole, DistElec, DissoEfficiency )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -37,6 +37,9 @@ customEHT = [1 1 1;    % 0- White
 
 customEET = [1 1 1;    % 0- White
     0 141/255 171/255];    % 1- Blue (bottom)
+
+customIslands = [1 1 1;    % 0- White
+    0 0 0];    % 1- Black (bottom)
 
 % ---------------------------------------------
 % Image of the phase type
@@ -136,9 +139,38 @@ print([NameWorkflowSave imageFilename],'-dpng');
 pause(0.2);
 
 % ---------------------------------------------
+% Image of lost islands (neither EETP nor EHTP)
+% ---------------------------------------------
+
+Islands = ones(size(MorphEHT));
+Islands(IndEHT) = 0;
+Islands(IndEET) = 0;
+IndIslands = find(Islands==1);
+Variable=reshape(Islands,nxyz(1),nxyz(3));
+Zpad(1:end-1,1:end-1) = Variable;
+Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
+Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
+
+figure;
+set(gcf,'Color','w')
+surf(X,Y,Zpad','EdgeColor','none')
+view(90,270)
+axis equal tight
+caxis([0 1]);
+xlabel('z [nm]')
+ylabel('x [nm]')
+colormap(customIslands);
+imageFilename=sprintf('_6_%s_LostIslands', filenameWOext);
+hgsave([NameWorkflowSave imageFilename])
+print([NameWorkflowSave imageFilename],'-dpng');
+
+pause(0.2);
+
+% ---------------------------------------------
 % Image of distance between exciton and EHTP
 % ---------------------------------------------
 
+DistHole(IndIslands) = nan;
 Variable=reshape(DistHole,nxyz(1),nxyz(3));
 Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
@@ -164,6 +196,7 @@ pause(0.2);
 % Image of distance between exciton and EETP
 % ---------------------------------------------
 
+DistElec(IndIslands) = nan;
 Variable=reshape(DistElec,nxyz(1),nxyz(3));
 Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row

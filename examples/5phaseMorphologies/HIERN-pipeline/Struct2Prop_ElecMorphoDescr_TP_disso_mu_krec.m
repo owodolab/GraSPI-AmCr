@@ -148,14 +148,19 @@ end
 % Exciton diffusion efficiency
 % ---------------------------------------------
 
-Induseful=find(MorphDesc3~=0);
-
-% DissoEfficiency =-1*ones(sizeMorph);
 DissoEfficiency = zeros(sizeMorph);
 
+% NB: this is 1D... discrepancy with 2D/3D MC or DD results because of lacking integration over solid angle
+% So, we overestimate Etad...
 DissoEfficiency(IndEHT) = exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
 DissoEfficiency(IndEET) = exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
 DissoEfficiency(IndCETP) = 1;
+
+% % A 'random walk' version (but not consistent with the fact that people measure Ld by fitting a diffusion equation)
+% PostParam.Elec.Ld = PostParam.Elec.Ld/sqrt(6);
+% Etad = @(r,L)  1 - ( erf(r/2/L)-r/(sqrt(pi)*L).*exp(-(r./(2*L)).^2) );
+% DissoEfficiency(IndEHT) = Etad(DistHole(IndEHT),PostParam.Elec.Ld(1));
+% DissoEfficiency(IndEET) = Etad(DistElec(IndEET),PostParam.Elec.Ld(2));
 
 % IndAcceptornoETP = find(((Morph == 1 ) | (Morph == 7 )) & (MorphEET==0)); %finds acceptor phase outside EETP (Electron effective transport phase)
 % IndDonornoETP = find(((Morph == 0 ) | (Morph == 5 ) ) & (MorphEHT==0));  %finds donor phase outside EHTP (Hole  effective transport phase)
