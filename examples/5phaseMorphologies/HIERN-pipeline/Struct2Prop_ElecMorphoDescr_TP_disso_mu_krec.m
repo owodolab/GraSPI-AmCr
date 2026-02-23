@@ -81,6 +81,7 @@ end
 IndEHT=find(MorphEHT==1);
 IndnotEHT = find(MorphEHT~=1);
 
+
 Neetp = numel(IndEET);
 Nehtp = numel(IndEHT);
 Neetpehtp = numel(union(IndEET,IndEHT));
@@ -95,6 +96,8 @@ if ~isempty(DETmixed)
 	ind = sub2ind(sizeMorph,DETmixed(:,2)+1,DETmixed(:,1)+1);
 	MorphDesc3(ind) = 2;
 end
+IndCETPMixed = find(MorphDesc3==2); % finds the nodes in the Common region to effective transport phases (CRETP)
+IndMixedNotCETP = setdiff(IndMixed,IndCETPMixed);
 
 % This is the pure acceptor phase part of the CETP
 DEETacceptor=importdata([NameFolderDataGraspi filenameDescEETacceptor]);
@@ -102,6 +105,7 @@ if ~isempty(DEETacceptor)
 	ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
 	MorphDesc3(ind) = 1;
 end
+IndCETPAcc = find(MorphDesc3==1); % finds the nodes in the Common region to effective transport phases (CRETP)
 
 % This is the pure donor phase part of the CETP
 DEHTdonor=importdata([NameFolderDataGraspi filenameDescEHTdonor]);
@@ -109,9 +113,13 @@ if ~isempty(DEHTdonor)
 	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
 	MorphDesc3(ind) = 3;
 end
+IndCETPDon = find(MorphDesc3==3); % finds the nodes in the Common region to effective transport phases (CRETP)
 
-IndCETP = find(MorphDesc3==2); % finds the nodes in the Common region to effective transport phases (CRETP)
+IndCETP = find(MorphDesc3~=0); % finds the nodes in the Common region to effective transport phases (CRETP)
 Ncetp = numel(IndCETP);
+Ncetpmix = numel(IndCETPMixed); % 'n_M_eff'
+Ncetpa = numel(IndCETPAcc); % 'e_A_eff'
+Ncetpd = numel(IndCETPDon); % 'e_D_eff'
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,13 +156,16 @@ end
 % Exciton diffusion efficiency
 % ---------------------------------------------
 
+save('workspace')
 DissoEfficiency = zeros(sizeMorph);
 
 % NB: this is 1D... discrepancy with 2D/3D MC or DD results because of lacking integration over solid angle
 % So, we overestimate Etad...
 DissoEfficiency(IndEHT) = exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
 DissoEfficiency(IndEET) = exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
-DissoEfficiency(IndCETP) = 1;
+DissoEfficiency(IndCETPMixed) = 1;
+DissoEfficiency(IndMixedNotCETP) = 0;
+
 
 % % A 'random walk' version (but not consistent with the fact that people measure Ld by fitting a diffusion equation)
 % PostParam.Elec.Ld = PostParam.Elec.Ld/sqrt(6);
@@ -588,6 +599,9 @@ MorphoElecAnalysis.PhaseType.Neetpehtp = Neetpehtp;
 MorphoElecAnalysis.PhaseType.Neetp = Neetp;
 MorphoElecAnalysis.PhaseType.Nehtp = Nehtp;
 MorphoElecAnalysis.PhaseType.Ncetp = Ncetp;
+MorphoElecAnalysis.PhaseType.Ncetpmix = Ncetpmix;
+MorphoElecAnalysis.PhaseType.Ncetpd = Ncetpd;
+MorphoElecAnalysis.PhaseType.Ncetpa = Ncetpa;
 MorphoElecAnalysis.Dissociation.DissoPa = DissoPa;
 MorphoElecAnalysis.Dissociation.DissoPb = DissoPb;
 MorphoElecAnalysis.Dissociation.DissoPc = DissoPc;

@@ -33,6 +33,31 @@ for hhh = 1:Nmorpho
 	ElecDescriptorValues(hhh,15) = MorphoElecAnalysis.Recombination.krecTrapehm;
 end
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Debug: just to check that Etad reconstructed from the fields and calculated from Graspi output file are consistent...
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for hhh = 1:Nmorpho
+	ResultsSaveFile = [NameWorkflowSave 'DataGraspi/descriptors.' NameMorpho{hhh} '.log']; 
+	fid = fopen(ResultsSaveFile,'r');
+	[A,count] = textscan(fid, ['%s' '%f'], 'delimiter',':');
+	fclose(fid);
+	Values = A{2};
+	n_M_eff = Values(1);
+	e_A_eff = Values(2);
+	e_D_eff = Values(3);
+	Pb = Values(4);
+	Pc = Values(5);
+	Nb = Values(6);
+	Nc = Values(7);
+	n = Values(8);
+	Etadmchck = (n_M_eff+Pb+Pc)/n;
+	Consistency = abs((ElecDescriptorValues(hhh,9)-Etadmchck)/ElecDescriptorValues(hhh,9));
+	if (Consistency>1e-3)
+		ElecDescriptorValues(hhh,9) = -ElecDescriptorValues(hhh,9);
+	end
+end
+
 % index = find(MorphNames==[NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);
 % ElecDescriptorValues = Data(index-1,:);
 

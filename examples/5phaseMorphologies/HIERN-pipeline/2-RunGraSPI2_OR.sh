@@ -17,6 +17,17 @@ DESCS=$2
 
 cd $DESCS
 
+echo $1
+echo ""
+echo $2
+echo ""
+echo $3
+echo ""
+echo $4
+echo ""
+echo $5
+echo ""
+
 f=0;
 #for i in Morph*sv_1.txt; do
 for i in $3; do
