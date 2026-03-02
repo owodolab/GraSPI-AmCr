@@ -8,11 +8,11 @@ function [ ElecDescriptorValues, ElecDescriptorNames ] = Struct2Prop_ElecMorphoD
 % This contains the four electronic descriptors for several morphologies
 
 % Descriptor Names
-ElecDescriptorNames = {'Ntot','Neetpehtp','Neetp','Nehtp','Ncetp','DissoPa','DissoPb','DissoPc','Etadm','Muem','Muhm','krecm','krecTrapem','krecTraphm','krecTrapehm'};
+ElecDescriptorNames = {'Ntot','Neetpehtp','Neetp','Nehtp','Ncetp','DissoPa','DissoPb','DissoPc','EtadmReconstr','Muem','Muhm','krecm','krecTrapem','krecTraphm','krecTrapehm','n_M_eff // Ncetpmixed','DissoPbOlga','DissoPcOlga','EtadmOlga'};
 
 % Load the traps values from the .mat file (on long term, we should extract everything from the .mat file...
 Nmorpho = numel(NameMorpho);
-ElecDescriptorValues = zeros(Nmorpho,3);
+ElecDescriptorValues = zeros(Nmorpho,16);
 
 for hhh = 1:Nmorpho
 	load([NameWorkflowSave NameMorpho{hhh} '_MorphoElecAnalysis.mat'])
@@ -51,11 +51,14 @@ for hhh = 1:Nmorpho
 	Nb = Values(6);
 	Nc = Values(7);
 	n = Values(8);
-	Etadmchck = (n_M_eff+Pb+Pc)/n;
-	Consistency = abs((ElecDescriptorValues(hhh,9)-Etadmchck)/ElecDescriptorValues(hhh,9));
-	if (Consistency>1e-3)
-		ElecDescriptorValues(hhh,9) = -ElecDescriptorValues(hhh,9);
-	end
+	ElecDescriptorValues(hhh,16) = n_M_eff;
+	ElecDescriptorValues(hhh,17) = Pb;
+	ElecDescriptorValues(hhh,18) = Pc;
+	ElecDescriptorValues(hhh,19) = (n_M_eff+Pb+Pc)/n;
+% 	Consistency = abs((ElecDescriptorValues(hhh,9)-ElecDescriptorValues(hhh,19))/ElecDescriptorValues(hhh,9));
+% 	if (Consistency>1e-3)
+% 		ElecDescriptorValues(hhh,9) = -ElecDescriptorValues(hhh,9);
+% 	end
 end
 
 % index = find(MorphNames==[NameFileSave '_sv_'  num2str(TimeStepChoice(hhh)) '_wf_' num2str(numworkflow)]);

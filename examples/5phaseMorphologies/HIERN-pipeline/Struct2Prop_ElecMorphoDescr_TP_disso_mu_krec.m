@@ -10,18 +10,24 @@ function [ MorphoElecAnalysis ] = Struct2Prop_ElecMorphoDescr_TP_disso_mu_krec( 
 filename = inputFile;
 filenameWOext = extractBefore(filename, ".");
 
-% Files with the nodes of the CETP
-filenameDescETmixed=[filenameWOext  '-IdsETmixed.txt']; % This is equivalent to region '3a'
-filenameDescEETacceptor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'
-filenameDescEHTdonor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'
+% Files with the volume fractions
+filenamePhiA=[filenameWOext '-phiA.txt']; % Acceptor volume fraction
+filenamePhiD=[filenameWOext '-phiD.txt']; % Donor volume fraction
 
 % Files with the nodes of the EETP and EHTP
 filenameDescEHT=[filenameWOext '-IdsEHT.txt']; % EHTP
 filenameDescEET=[filenameWOext '-IdsEET.txt']; % EETP
 
-% Files with the volume fractions
-filenamePhiA=[filenameWOext '-phiA.txt']; % Acceptor volume fraction
-filenamePhiD=[filenameWOext '-phiD.txt']; % Donor volume fraction
+% TO BE CHECKED IN DETAIL BUT...
+% THE CONFIGURATION OF FILES BELOW ALLOW TO RECOVER OLGA'S EXCITON DISSOCIATION EFFICIENCY VALUES
+% SO THERE'S AN INVERSION OF FILE NAMES...
+
+% Files with the nodes of the CETP
+filenameDescETmixed=[filenameWOext  '-IdsETmixed.txt']; % This is equivalent to region '3a'
+% filenameDescEETacceptor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'
+% filenameDescEHTdonor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'
+filenameDescEHTdonor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'
+filenameDescEETacceptor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'
 
 % Files with the distances to CETP
 filenameDistHole=[filenameWOext '-DistancesBlackOrangeGreyToGREEN.txt'];
@@ -56,35 +62,41 @@ IndAcr = find(Morph==7);
 MorphDesc3=zeros(sizeMorph);
 MorphEET=zeros(sizeMorph);
 MorphEHT=zeros(sizeMorph);
+MorphDistHole=zeros(sizeMorph);
+MorphDistElec=zeros(sizeMorph);
+DistHole = nan*zeros(sizeMorph);
+DistElec = nan*zeros(sizeMorph);
 
-% ---------------------------------------------
-% The EETP and EHTP
-% ---------------------------------------------
-
-% This is the effective electron transport phase
-EET = importdata([NameFolderDataGraspi filenameDescEET]);
-EET = unique(EET,'rows'); % because I think there's a mistake in Olga's file
-if ~isempty(EET)
-	ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
-	MorphEET(ind) = 1;
-end
-IndEET=find(MorphEET==1);
-IndnotEET = find(MorphEET~=1);
-
-% This is the effective hole transport phase
-EHT=importdata([NameFolderDataGraspi filenameDescEHT]);
-EHT = unique(EHT,'rows'); % because I think there's a mistake in Olga's file
-if ~isempty(EHT)
-	ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
-	MorphEHT(ind) = 1;
-end
-IndEHT=find(MorphEHT==1);
-IndnotEHT = find(MorphEHT~=1);
-
-
-Neetp = numel(IndEET);
-Nehtp = numel(IndEHT);
-Neetpehtp = numel(union(IndEET,IndEHT));
+% % ---------------------------------------------
+% % The EETP and EHTP
+% % ---------------------------------------------
+% % NO!!! actually this contains nodes that are not in the ETP
+% % e.g. domains that are in contact with the proper electrode, but fully surrounded by lost domain of the other TP 
+% % (a region of the other TP which is not 'effective')
+% 
+% % This is the effective electron transport phase
+% EET = importdata([NameFolderDataGraspi filenameDescEET]);
+% EET = unique(EET,'rows'); % because I think there's a mistake in Olga's file
+% if ~isempty(EET)
+% 	ind = sub2ind(sizeMorph,EET(:,2)+1,EET(:,1)+1);
+% 	MorphEET(ind) = 1;
+% end
+% IndEET=find(MorphEET==1);
+% IndnotEET = find(MorphEET~=1);
+% 
+% % This is the effective hole transport phase
+% EHT=importdata([NameFolderDataGraspi filenameDescEHT]);
+% EHT = unique(EHT,'rows'); % because I think there's a mistake in Olga's file
+% if ~isempty(EHT)
+% 	ind = sub2ind(sizeMorph,EHT(:,2)+1,EHT(:,1)+1);
+% 	MorphEHT(ind) = 1;
+% end
+% IndEHT=find(MorphEHT==1);
+% IndnotEHT = find(MorphEHT~=1);
+% 
+% Neetp = numel(IndEET);
+% Nehtp = numel(IndEHT);
+% Neetpehtp = numel(union(IndEET,IndEHT));
 
 % ---------------------------------------------
 % The CETP
@@ -105,7 +117,7 @@ if ~isempty(DEETacceptor)
 	ind = sub2ind(sizeMorph,DEETacceptor(:,2)+1,DEETacceptor(:,1)+1);
 	MorphDesc3(ind) = 1;
 end
-IndCETPAcc = find(MorphDesc3==1); % finds the nodes in the Common region to effective transport phases (CRETP)
+IndCETPAcc = find(MorphDesc3==1); % finds the nodes in the Common region to effective transport phases (CETP)
 
 % This is the pure donor phase part of the CETP
 DEHTdonor=importdata([NameFolderDataGraspi filenameDescEHTdonor]);
@@ -113,13 +125,58 @@ if ~isempty(DEHTdonor)
 	ind = sub2ind(sizeMorph,DEHTdonor(:,2)+1,DEHTdonor(:,1)+1);
 	MorphDesc3(ind) = 3;
 end
-IndCETPDon = find(MorphDesc3==3); % finds the nodes in the Common region to effective transport phases (CRETP)
+IndCETPDon = find(MorphDesc3==3); % finds the nodes in the Common region to effective transport phases (CETP)
 
-IndCETP = find(MorphDesc3~=0); % finds the nodes in the Common region to effective transport phases (CRETP)
+IndCETP = find(MorphDesc3~=0); % finds the nodes in the Common region to effective transport phases (CETP)
 Ncetp = numel(IndCETP);
-Ncetpmix = numel(IndCETPMixed); % 'n_M_eff'
-Ncetpa = numel(IndCETPAcc); % 'e_A_eff'
-Ncetpd = numel(IndCETPDon); % 'e_D_eff'
+Ncetpmix = numel(IndCETPMixed); % 'n_M_eff', 3a
+Ncetpa = numel(IndCETPAcc); % 'e_A_eff', 3b
+Ncetpd = numel(IndCETPDon); % 'e_D_eff', 3c
+Nmixnotcetp = numel(IndMixedNotCETP);
+
+% ---------------------------------------------
+% Distances to EETP and EHTP for electrons and holes
+% ---------------------------------------------
+
+DistEET=importdata([NameFolderDataGraspi filenameDistElec]);
+if ~isempty(DistEET)
+	ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
+	DistElec(ind) = DistEET(:,3);
+end
+Indb = find(isnan(DistElec)==0);
+Nb = numel(Indb);
+
+DistEHT=importdata([NameFolderDataGraspi filenameDistHole]);
+if ~isempty(DistEHT)
+	ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
+	DistHole(ind) = DistEHT(:,3);
+end
+Indc = find(isnan(DistHole)==0);
+Nc = numel(Indc);
+
+% ---------------------------------------------
+% Now, we can reconstruct the EETP and EHTP
+% ---------------------------------------------
+
+% This is the effective electron transport phase
+MorphEET(Indb) = 1; % the nodes that are in the EETP but not in the mixed phase part of the CETP (corresponding to Pb, Nb); NB: this contains 3b
+MorphEET(IndCETPMixed) = 2; % The nodes 3a
+MorphEET(IndCETPAcc) = 3; % The nodes '3b'; should be in Indb already, but to be on the safe side...
+% MorphEET(IndCETPDon) = 3; % The nodes '3b'; should be in Indb already, but to be on the safe side...
+IndEET=find(MorphEET~=0);
+IndnotEET = find(MorphEET==0);
+
+% This is the effective hole transport phase
+MorphEHT(Indc) = 1; % the nodes that are in the EHTP but not in the mixed phase part of the CETP (corresponding to Pc, Nc); NB: this contains 3c
+MorphEHT(IndCETPMixed) = 2; % The nodes 3a
+MorphEHT(IndCETPDon) = 3; % The nodes '3c'; should be in Indc already, but to be on the safe side...
+% MorphEHT(IndCETPAcc) = 3; % The nodes '3c'; should be in Indc already, but to be on the safe side...
+IndEHT=find(MorphEHT~=0);
+IndnotEHT = find(MorphEHT==0);
+
+Neetp = numel(IndEET);
+Nehtp = numel(IndEHT);
+Neetpehtp = numel(union(IndEET,IndEHT));
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,44 +185,21 @@ Ncetpd = numel(IndCETPDon); % 'e_D_eff'
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % ---------------------------------------------
-% Matrix initialization
+% Exciton diffusion efficiency field
 % ---------------------------------------------
 
-MorphDistHole=zeros(sizeMorph);
-MorphDistElec=zeros(sizeMorph);
-DistHole=zeros(sizeMorph);
-DistElec=zeros(sizeMorph);
-
-% ---------------------------------------------
-% Distances to EETP and EHTP for electrons and holes
-% ---------------------------------------------
-
-DistEHT=importdata([NameFolderDataGraspi filenameDistHole]);
-if ~isempty(DistEHT)
-	ind = sub2ind(sizeMorph,DistEHT(:,2)+1,DistEHT(:,1)+1);
-	DistHole(ind) = DistEHT(:,3);
-end
-
-DistEET=importdata([NameFolderDataGraspi filenameDistElec]);
-if ~isempty(DistEET)
-	ind = sub2ind(sizeMorph,DistEET(:,2)+1,DistEET(:,1)+1);
-	DistElec(ind) = DistEET(:,3);
-end
-
-% ---------------------------------------------
-% Exciton diffusion efficiency
-% ---------------------------------------------
-
-save('workspace')
 DissoEfficiency = zeros(sizeMorph);
 
 % NB: this is 1D... discrepancy with 2D/3D MC or DD results because of lacking integration over solid angle
 % So, we overestimate Etad...
 DissoEfficiency(IndEHT) = exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
 DissoEfficiency(IndEET) = exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
-DissoEfficiency(IndCETPMixed) = 1;
-DissoEfficiency(IndMixedNotCETP) = 0;
-
+% DissoEfficiency(Indc) = exp(-DistHole(Indc)/PostParam.Elec.Ld(1));
+% DissoEfficiency(Indb) = exp(-DistElec(Indb)/PostParam.Elec.Ld(2));
+DissoEfficiency(IndCETPMixed) = 1; % Necessary!! DistHole, DistElec are nans @ IndCETPMixed
+% DissoEfficiency(IndCETPDon) = 0;%exp(-0.5/PostParam.Elec.Ld(1)); % Necessary!! DistHole, DistElec are nans @ IndCETPDon
+% DissoEfficiency(IndCETPAcc) = 0;%exp(-0.5/PostParam.Elec.Ld(2)); % Necessary!! DistHole, DistElec are nans @ IndCETPAcc
+% % DissoEfficiency(IndMixedNotCETP) = 0;
 
 % % A 'random walk' version (but not consistent with the fact that people measure Ld by fitting a diffusion equation)
 % PostParam.Elec.Ld = PostParam.Elec.Ld/sqrt(6);
@@ -181,13 +215,21 @@ DissoEfficiency(IndMixedNotCETP) = 0;
 % DissoEfficiency(IndDonornoETP) = 0;
 % DissoEfficiency(IndmixednoETP) = 0;
 
+% ---------------------------------------------
+% Exciton diffusion efficiency, average values
+% ---------------------------------------------
+
 Etadm = mean(mean(DissoEfficiency));
 
-DissoPa = sum(DissoEfficiency(IndCETP));
-IndEHTPnoCETP = setdiff(IndEHT,IndCETP);
-DissoPb = sum(DissoEfficiency(IndEHTPnoCETP));
-IndEETPnoCETP = setdiff(IndEET,IndCETP);
-DissoPc = sum(DissoEfficiency(IndEETPnoCETP));
+DissoPa = sum(DissoEfficiency(IndCETPMixed));
+IndEHTPnoCETP = setdiff(IndEHT,IndCETPMixed);
+DissoPc = sum(DissoEfficiency(IndEHTPnoCETP));
+IndEETPnoCETP = setdiff(IndEET,IndCETPMixed);
+DissoPb = sum(DissoEfficiency(IndEETPnoCETP));
+% IndEHTPnoCETP = setdiff(Indc,IndCETPMixed);
+% DissoPc = sum(DissoEfficiency(IndEHTPnoCETP));
+% IndEETPnoCETP = setdiff(Indb,IndCETPMixed);
+% DissoPb = sum(DissoEfficiency(IndEETPnoCETP));
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,8 +249,9 @@ CalcKrecTraph = zeros(sizeMorph);
 % Calculation: bimolecular recombination prefactor
 % ---------------------------------------------
 
-IndET = find(MorphDesc3~=0); % finds the nodes in the effective transport phases (EETP or EHTP)
-CalcKrecFinal(IndET) = 4*phiAMorph(IndET).*phiDMorph(IndET);
+% IndET = find(MorphDesc3~=0); % finds the nodes in the effective transport phases (EETP or EHTP)
+% CalcKrecFinal(IndET) = 4*phiAMorph(IndET).*phiDMorph(IndET);
+CalcKrecFinal(IndCETP) = 4*phiAMorph(IndCETP).*phiDMorph(IndCETP);
 krecm = sum(sum(CalcKrecFinal))/Neetpehtp;
 
 % Associated fields for plots
@@ -600,8 +643,11 @@ MorphoElecAnalysis.PhaseType.Neetp = Neetp;
 MorphoElecAnalysis.PhaseType.Nehtp = Nehtp;
 MorphoElecAnalysis.PhaseType.Ncetp = Ncetp;
 MorphoElecAnalysis.PhaseType.Ncetpmix = Ncetpmix;
+MorphoElecAnalysis.PhaseType.Nmixnotcetp = Nmixnotcetp;
 MorphoElecAnalysis.PhaseType.Ncetpd = Ncetpd;
 MorphoElecAnalysis.PhaseType.Ncetpa = Ncetpa;
+MorphoElecAnalysis.PhaseType.Nb = Nb;
+MorphoElecAnalysis.PhaseType.Nc = Nc;
 MorphoElecAnalysis.Dissociation.DissoPa = DissoPa;
 MorphoElecAnalysis.Dissociation.DissoPb = DissoPb;
 MorphoElecAnalysis.Dissociation.DissoPc = DissoPc;
@@ -612,6 +658,26 @@ MorphoElecAnalysis.Recombination.krecTraphm = krecTraphm;
 MorphoElecAnalysis.Recombination.krecTrapehm = krecTrapehm;
 MorphoElecAnalysis.Mobilities.Muem = Muem;
 MorphoElecAnalysis.Mobilities.Muhm = Muhm;
+
+% Correspondance with Olga's variables
+%  
+% - ...IdsETMixed.txt: the list of nodes in the 'mixed phase part' of the CETP (not including the nodes neighbouring interfaces between pure donor and acceptor regions)
+% - ...IdsEETacceptor.txt: list of nodes at the DA interface in the 'acceptor part' of the CETP; what we called '3b'
+% - ...IdsEHTdonor.txt: list of nodes at the DA interface in the 'donor part' of the CETP; what we called '3c'
+%
+% - the ...DistancesWhiteYellowGreyToGREEN.txt: this is the field of smallest distances to the CETP for the nodes that are in the EETP but not in the mixed phase part of the CETP (corresponding to Pb, Nb); NB: this contains 3b
+% - the ...DistancesBlackOrangeGreyToGREEN.txt: this is the field of smallest distances to the CETP for the nodes that are in the EHTP but not in themixed phase part of the CETP (corresponding to Pc, Nc); NB: this contains 3c
+%
+% - nMeff = Ncetpmixed: number of nodes in the 'mixed phase part' of the CETP (not including the nodes neighbouring interfaces between pure donor and acceptor regions, those we called 3b and 3c). nMeff is also equal to our 'Pa'
+% - eAeff = Ncetpa: number of nodes at the DA interface in the 'acceptor part' of the CETP; what we called '3b'
+% - eDeff = Ncetpd: number of nodes at the DA interface in the 'donor part' of the CETP; what we called '3c'
+% - Pb = DissoPb: sum(exp(-Dist/L)) over the nodes of the EETP that are not in the mixed phase part of the CETP; our 'Pb' of the paper 
+% - Pc = DissoPc: sum(exp(-Dist/L)) over the nodes of the EHTP that are not in the mixed phase part of the CETP; our 'Pc' of the paper
+% - Nb: number of nodes in the EETP that are not in the CETP
+% - Nc: number of nodes in the EHTP that are not in the CETP
+% - n: total number of nodes
+% 
+% The average dissociation efficiency is calculated as: (nMeff+Pb+Pc)/n
 
 % % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Figures
