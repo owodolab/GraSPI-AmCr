@@ -1,4 +1,4 @@
-function  [ AveragedMobility ] = Struct2Prop_ElecMorphoDescr_muavg( MobilityMatrix, IndMobETP, MorphETP, penalty, Mode )
+function  [ AveragedMobility ] = Struct2Prop_ElecMorphoDescr_muavg( MobilityMatrix, IndMobETP, penalty, Mode )
 % penalty: it is the default, very low mobility value we set at the nodes of the ETP where the mobility is zero when entering the routine
 % Mode: defines the way we average
 %   Mode 1- Harmonic average on vertical direction per column and then arithmetic average
@@ -25,10 +25,13 @@ Inversemu(IndMobETP(Ind1)) = 1./MobilityMatrix(IndMobETP(Ind1)); % inverse on th
 % UntransportingETP = zeros(size(MobilityMatrix));
 % UntransportingETP(Ind2) = 1;
 
+% Nodes involved in averaging
+CountNodes = zeros(size(MobilityMatrix));
+CountNodes(IndMobETP) = 1;
 % Number of nodes along each vertical line
-lengthETP_v=sum(MorphETP,1);
+lengthETP_v=sum(CountNodes,1);
 % Number of nodes along each horizontal line
-lengthETP_h=sum(MorphETP,2);
+lengthETP_h=sum(CountNodes,2);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Go for averaging

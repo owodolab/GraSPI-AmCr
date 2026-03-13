@@ -22,12 +22,12 @@ filenameDescEET=[filenameWOext '-IdsEET.txt']; % EETP
 % THE CONFIGURATION OF FILES BELOW ALLOW TO RECOVER OLGA'S EXCITON DISSOCIATION EFFICIENCY VALUES
 % SO THERE'S AN INVERSION OF FILE NAMES...
 
-% Files with the nodes of the CETP
+% Files with the nodes of the CETP; I think the files names are mixed up here!!!
 filenameDescETmixed=[filenameWOext  '-IdsETmixed.txt']; % This is equivalent to region '3a'
-% filenameDescEETacceptor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'
-% filenameDescEHTdonor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'
-filenameDescEHTdonor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'
-filenameDescEETacceptor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'
+% filenameDescEETacceptor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3b'; with this, we are wrong!!
+% filenameDescEHTdonor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3c'; with this, we are wrong!!
+filenameDescEHTdonor=[filenameWOext  '-IdsEETacceptor.txt']; % This is equivalent to region '3c'
+filenameDescEETacceptor=[filenameWOext '-IdsEHTdonor.txt']; % This is equivalent to region '3b'
 
 % Files with the distances to CETP
 filenameDistHole=[filenameWOext '-DistancesBlackOrangeGreyToGREEN.txt'];
@@ -54,6 +54,8 @@ IndDam = find(Morph==0);
 IndDcr = find(Morph==5);
 IndAam = find(Morph==1);
 IndAcr = find(Morph==7);
+ND = numel(union(IndDam,IndDcr));
+NA = numel(union(IndAam,IndAcr));
 
 % ---------------------------------------------
 % Matrix initialization
@@ -162,7 +164,6 @@ Nc = numel(Indc);
 MorphEET(Indb) = 1; % the nodes that are in the EETP but not in the mixed phase part of the CETP (corresponding to Pb, Nb); NB: this contains 3b
 MorphEET(IndCETPMixed) = 2; % The nodes 3a
 MorphEET(IndCETPAcc) = 3; % The nodes '3b'; should be in Indb already, but to be on the safe side...
-% MorphEET(IndCETPDon) = 3; % The nodes '3b'; should be in Indb already, but to be on the safe side...
 IndEET=find(MorphEET~=0);
 IndnotEET = find(MorphEET==0);
 
@@ -170,7 +171,6 @@ IndnotEET = find(MorphEET==0);
 MorphEHT(Indc) = 1; % the nodes that are in the EHTP but not in the mixed phase part of the CETP (corresponding to Pc, Nc); NB: this contains 3c
 MorphEHT(IndCETPMixed) = 2; % The nodes 3a
 MorphEHT(IndCETPDon) = 3; % The nodes '3c'; should be in Indc already, but to be on the safe side...
-% MorphEHT(IndCETPAcc) = 3; % The nodes '3c'; should be in Indc already, but to be on the safe side...
 IndEHT=find(MorphEHT~=0);
 IndnotEHT = find(MorphEHT==0);
 
@@ -194,12 +194,7 @@ DissoEfficiency = zeros(sizeMorph);
 % So, we overestimate Etad...
 DissoEfficiency(IndEHT) = exp(-DistHole(IndEHT)/PostParam.Elec.Ld(1));
 DissoEfficiency(IndEET) = exp(-DistElec(IndEET)/PostParam.Elec.Ld(2));
-% DissoEfficiency(Indc) = exp(-DistHole(Indc)/PostParam.Elec.Ld(1));
-% DissoEfficiency(Indb) = exp(-DistElec(Indb)/PostParam.Elec.Ld(2));
 DissoEfficiency(IndCETPMixed) = 1; % Necessary!! DistHole, DistElec are nans @ IndCETPMixed
-% DissoEfficiency(IndCETPDon) = 0;%exp(-0.5/PostParam.Elec.Ld(1)); % Necessary!! DistHole, DistElec are nans @ IndCETPDon
-% DissoEfficiency(IndCETPAcc) = 0;%exp(-0.5/PostParam.Elec.Ld(2)); % Necessary!! DistHole, DistElec are nans @ IndCETPAcc
-% % DissoEfficiency(IndMixedNotCETP) = 0;
 
 % % A 'random walk' version (but not consistent with the fact that people measure Ld by fitting a diffusion equation)
 % PostParam.Elec.Ld = PostParam.Elec.Ld/sqrt(6);
@@ -294,6 +289,21 @@ HEffdepMobEET=zeros(sizeMorph(1),1);
 % Calculation of w_h*phi^2 at each point
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% ---------------------------------------------
+% The following allows for calculation of mobilities in 'Single materials' layer 
+% (more precisely: 'Single transport phase' layer, either donor transport phase or acceptor transport phase)
+% ---------------------------------------------
+
+if ( NA==Ntot )
+	IndEET = (1:Ntot)';
+	IndnotEET = [];	
+	MorphEET(:,:) = 1;
+elseif ( ND==Ntot )
+	IndEHT = (1:Ntot)';
+	IndnotEHT = [];
+	MorphEHT(:,:) = 1;
+end
+	
 % ---------------------------------------------
 % For hole mobilities in the EHTP, calculate w_h*phiD^2
 % ---------------------------------------------
@@ -428,19 +438,19 @@ MobEET(IndEET) = whphi2_EET_AllNeighb(IndEET);
 
 % Indices within ETP and with zero mobilities, in the whole morphology node list : set mobility to a minimal value (to avoid inf in the averaging)
 toto = MobEET(2:end,:);
-Ind2 = find(MorphEET(2:end,:)==1 & toto==0);
+Ind2 = find(MorphEET(2:end,:)~=0 & toto==0);
 toto(Ind2) = PostParam.Elec.MobilityAveragingMode;
 MobEET(2:end,:) = toto;
 
 % Indices within ETP and with zero mobilities, in the whole morphology node list 
-toto = MobEHT(2:end,:);
-Ind2 = find(MorphEHT(2:end,:)==1 & toto==0);
+toto = MobEHT(1:end-1,:);
+Ind2 = find(MorphEHT(1:end-1,:)~=0 & toto==0);
 toto(Ind2) = PostParam.Elec.MobilityAveragingMode;
-MobEHT(2:end,:) = toto;
+MobEHT(1:end-1,:) = toto;
 
 % Average
-[ Muem ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)==1), MorphEET(2:end,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
-[ Muhm ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)==1), MorphEHT(1:end-1,:), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
+[ Muem ] = Struct2Prop_ElecMorphoDescr_muavg( MobEET(2:end,:), find(MorphEET(2:end,:)~=0), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
+[ Muhm ] = Struct2Prop_ElecMorphoDescr_muavg( MobEHT(1:end-1,:), find(MorphEHT(1:end-1,:)~=0), PostParam.Elec.MobilityMinValue, PostParam.Elec.MobilityAveragingMode);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Save the global descriptor values in files
@@ -616,6 +626,11 @@ HEffdepMobEET(Indnonode)=0;
 % Write output
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NB:
+% Ncetp = Ncetpmix + Ncetpd + Ncetpa
+% Neetp = Nb + Ncetpmix
+% Nehtp = Nc + Ncetpmix
+% Neetpehtp = Neetp + Nehtp - Ncetpmix = Nb + Nc + Ncetpmix
 
 % Fields
 MorphoElecAnalysis.PhaseType.Morph = Morph;
