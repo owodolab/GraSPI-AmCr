@@ -73,11 +73,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
@@ -98,11 +100,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
@@ -123,11 +127,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
@@ -151,11 +157,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
@@ -176,11 +184,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 35]);
 xlabel('z [nm]')
 ylabel('x [nm]')
@@ -202,11 +212,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
 surf(X,Y,Zpad','EdgeColor','none')
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([0 20]);
 colorbar
 colormap(feval('jet'));
@@ -228,12 +240,13 @@ Zpad(1:end-1,1:end-1) = Variable;
 Zpad(end,1:end-1) = Variable(end,:);         % Repeat last row
 Zpad(:,end) = Zpad(:,end-1);        % Repeat last column
 
-figure;
+figure;hold on;grid off;box on
 set(gcf,'Color','w')
-
 surf(X,Y,Zpad','EdgeColor','none');
+axis equal
+axis([0 nxyz(1) 0 nxyz(3)])
+% axis equal tight
 view(90,270)
-axis equal tight
 caxis([-0.01 1]);
 colorbar
 xlabel('z [nm]')
