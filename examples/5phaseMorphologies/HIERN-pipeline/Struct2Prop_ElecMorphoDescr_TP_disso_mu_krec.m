@@ -1,5 +1,59 @@
 function [ MorphoElecAnalysis ] = Struct2Prop_ElecMorphoDescr_TP_disso_mu_krec( inputFile, NameFolderDataGraspi, PostParam )
 
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Help about the meaning of the variables below 
+% Correspondance with Graspi's output, historical notations and notation in the paper
+% This has been carefully crossed-checked!
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ---------------------------------------------
+% The files:
+% ---------------------------------------------
+%
+% ...IdsETMixed.txt: the list of nodes in the CETP, mixed phase part (/!\ the mixed phase ONLY)
+% ...IdsEHTdonor.txt, /!\ THERE IS AN INVERSION: the list of nodes in the CETP, acceptor phase part at the interfaces between pure donor and acceptor regions
+% ...IdsEETacceptor.txt, /!\ THERE IS AN INVERSION: the list of nodes in the CETP, donor phase part at the interfaces between pure donor and acceptor regions
+% ...DistancesBlackOrangeGreyToGREEN.txt: the distances to the CETP for the nodes of the EHTP that do not belong to the mixed phase of the CETP
+% ...DistancesWhiteYellowGreyToGREEN.txt: the distances to the CETP for the nodes of the EETP that do not belong to the mixed phase of the CETP
+%
+% ---------------------------------------------
+% The number of nodes:
+% ---------------------------------------------
+%
+% Ncetpmix (Olga's nMeff, what we historically called '3a' nodes): number of nodes in the CETP, mixed phase part (/!\ the mixed phase ONLY)
+% Ncetpa (Olga's e_D_eff /!\ THERE IS AN INVERSION, what we historically called '3b' nodes): number of nodes in the CETP, acceptor phase part at the interfaces between pure donor and acceptor regions 
+% Ncetpd (Olga's e_A_eff /!\ THERE IS AN INVERSION, what we historically called '3c' nodes): number of nodes in the CETP, donor phase part at the interfaces between pure donor and acceptor regions
+% Nb: number of nodes that are in the EETP but not in the mixed phase part of the CETP (corresponding to Pb); NB: this contains 3b
+% Nc: number of nodes that are in the EHTP but not in the mixed phase part of the CETP (corresponding to Pc); NB: this contains 3c
+%
+% Ncetp = Ncetpmix + Ncetpd + Ncetpa: number of nodes of the CETP
+% Neetp = Nb + Ncetpmix: number of nodes of the EETP
+% Nehtp = Nc + Ncetpmix: number of nodes of the EHTP
+%
+% Neetpehtp = Neetp + Nehtp - Ncetpmix = Nb + Nc + Ncetpmix: number of nodes of both effective transport phases together
+%
+% DissoPa: sum(exp(-Dist/L))=sum(1) over the nodes of the EETP that are in the mixed phase of the CETP; (nearly, except interface management) our 'Pa' of the paper
+% DissoPb: sum(exp(-Dist/L)) over the nodes of the EETP that are not in the mixed phase of in the CETP; (nearly, except interface management) our 'Pb' of the paper
+% DissoPc: sum(exp(-Dist/L)) over the nodes of the EHTP that are not in the mixed phase of in the CETP; (nearly, except interface management) our 'Pc' of the paper
+%
+% ---------------------------------------------
+% The other way around, correspondance with Graspi's output of average values:
+% ---------------------------------------------
+%
+% nMeff: Ncetpmix
+% e_A_eff, /!\ THERE IS AN INVERSION: Ncetpd 
+% e_D_eff,/!\ THERE IS AN INVERSION: Ncetpa
+% Pb: sum(exp(-Dist/L)) over the nodes of the EETP that are not in the mixed phase of in the CETP; (nearly, except interface management) our 'Pb' of the paper, 'DissoPb' in the code
+% Pc: sum(exp(-Dist/L)) over the nodes of the EHTP that are not in the mixed phase of in the CETP; (nearly, except interface management) our 'Pc' of the paper, 'DissoPc' in the code
+% Nb: number of nodes in the EETP that are not in the CETP
+% Nc: number of nodes in the EHTP that are not in the CETP
+% n: total number of nodes
+% 
+% The average dissociation efficiency is calculated by Olga as: (nMeff+Pb+Pc)/n
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Load data and define filenames
