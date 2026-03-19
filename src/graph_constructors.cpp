@@ -580,28 +580,28 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                         if (C[s] == WHITE) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == BLACK) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == WHITE) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == BLACK) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
@@ -619,26 +619,26 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                        
                         if (C[s] == WHITE) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == ORANGE) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                                w, o, G, W, L);
                         }
                         if (C[t] == WHITE) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
 
                         }
                         if (C[t] == ORANGE) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
 
@@ -660,26 +660,26 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                         if (C[s] == YELLOW) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
 
                         }
                         if (C[s] == BLACK) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == YELLOW) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == BLACK) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
@@ -692,25 +692,25 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                         
                         if (C[s] == YELLOW) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[s] == ORANGE) {
                             pairForDescET = std::make_pair(s, C[s]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == YELLOW) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEHHTatInterface.insert(pairForDescET);
+                            setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }
                         if (C[t] == ORANGE) {
                             pairForDescET = std::make_pair(t, C[t]);
-                            setOfIndicesEEHTatInterface.insert(pairForDescET);
+                            setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
                         }

@@ -553,7 +553,7 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
 
     unsigned int n = boost::num_vertices(*G);
     std::vector<float> distances(n);
-    std::string filename = std::string("DistancesBlackOrangeGreyToGREEN.txt");
+    std::string filename = std::string("DistancesBlackOrangeToGREEN.txt");
     std::vector<COLOR> colorsForEffectiveHoleTransportPaths;
     colorsForEffectiveHoleTransportPaths.push_back(BLACK);
     colorsForEffectiveHoleTransportPaths.push_back(ORANGE);
@@ -565,7 +565,7 @@ inline void distancesForEffectiveChargeTransport_5phases(graph_t* G,
 
     // repeat three above steps for distanced from any grey to red
     for(unsigned int  i=0; i<distances.size(); i++) distances[i] = 0;
-    filename = std::string("DistancesWhiteYellowGreyToGREEN.txt");
+    filename = std::string("DistancesWhiteYellowToGREEN.txt");
     std::vector<COLOR> colorsForEffectiveEleTransportPaths;
     colorsForEffectiveEleTransportPaths.push_back(WHITE);
     colorsForEffectiveEleTransportPaths.push_back(YELLOW);

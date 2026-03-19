@@ -16,22 +16,32 @@ for i in $DESCS/*.log; do
 
     LOCALDESC=`cat $i | cut -d ':' -f2 | paste -sd' ' -`
     
+    echo "localdesc: $LOCALDESC"
+    
     target_key="n_M_eff"
     nMeff=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "nMeff: $nMeff"
     target_key="e_A_eff"
     eAff=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "eAff: $eAff"
     target_key="e_D_eff"
     eDeff=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "eDeff: $eDeff"
     target_key="Pb"
     Pb=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "Pb: $Pb"
     target_key="Pc"
     Pc=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "Pc: $Pc"
     target_key="Nb"
     Nb=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "Nb: $Nb"
     target_key="Nc"
     Nc=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
-    target_key="N"
+    echo "Nc: $Nc"
+    target_key="n"
     N=$(grep "^$target_key:" $i | cut -d':' -f2- | xargs)
+    echo "N: $N"
     
     
 #   (Desc3a*1+DescPb+DescPc)/(Desc3a+DescNb+DescNc)
