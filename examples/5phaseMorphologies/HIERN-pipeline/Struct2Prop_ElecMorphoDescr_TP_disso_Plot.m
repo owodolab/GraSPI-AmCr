@@ -219,7 +219,7 @@ axis equal
 axis([0 nxyz(1) 0 nxyz(3)])
 % axis equal tight
 view(90,270)
-caxis([0 20]);
+caxis([0 35]);
 colorbar
 colormap(feval('jet'));
 xlabel('z [nm]')

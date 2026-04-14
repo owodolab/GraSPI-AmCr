@@ -72,11 +72,11 @@ axis equal
 axis([0 nxyz(1) 0 nxyz(3)])
 % axis equal tight
 view(90,270)
-caxis([-0.01 1]);
+% caxis([-0.01 1]);
 colormap([ [1 1 1] ;jet(100)]);
 colorbar;
 set(gca,'colorscale','log')
-caxis([1e-3 1])
+caxis([1e-4 1])
 xlabel('z [nm]')
 ylabel('x [nm]')
 
@@ -103,11 +103,11 @@ axis equal
 axis([0 nxyz(1) 0 nxyz(3)])
 % axis equal tight
 view(90,270)
-caxis([-0.01 1]);
+% caxis([-0.01 1]);
 colormap([ [1 1 1] ;jet(100)]);
 colorbar;
 set(gca,'colorscale','log')
-caxis([1e-3 1])
+caxis([1e-4 1])
 xlabel('z [nm]')
 ylabel('x [nm]')
 

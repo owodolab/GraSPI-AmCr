@@ -74,9 +74,9 @@ view(90,270)
 caxis([-0.01 1]);
 xlabel('z [nm]')
 ylabel('x [nm]')
-colorbar;
-% set(gca,'colorscale','log')
-% caxis([1e-3 1])
+% colorbar;
+set(gca,'colorscale','log')
+caxis([1e-3 1])
 
 imageFilename=sprintf('_10_%s_krec', filenameWOext);
 hgsave([NameWorkflowSave imageFilename])
