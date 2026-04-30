@@ -467,7 +467,7 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
                                                   std::string filename = ""
                                                   ){
     vertex_t source = d_g.id(GREEN);
-    connect_multiple_same_color_and_GREEN pred(*G,targetC,C);
+    connect_multiple_same_color_and_GREEN pred(*G,targetC,C,W);
     determine_shortest_distances( G, W, source, pred, d);
     
     double Pb = 0;
@@ -480,8 +480,8 @@ compute_shortest_distance_from_multipleSourceC_to_GREEN(
         for (unsigned int i = 0; i < d.size(); i++) {
             unsigned int c = C[i];
                 if ( fabs(d[i]) < std::numeric_limits<float>::max() ){
-                for (unsigned int iC=0; iC < targetC.size(); iC++){
-//                    if (c == targetC[iC])
+                    for (unsigned int iC=0; iC < targetC.size(); iC++){
+//                        if (c == targetC[iC]){
                     if ( (c == targetC[iC]) && (c != GREY)){
                         int idx = i / d_a.nx;
                         int idy = i % d_a.nx;

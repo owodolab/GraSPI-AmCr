@@ -475,6 +475,9 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     std::ofstream fileIdOfEHT("IdsEHT.txt");
     std::ofstream fileIdOfEET("IdsEET.txt");
 
+    std::ofstream fileIdOfCEHT("IdsCEHT.txt");
+    std::ofstream fileIdOfCEET("IdsCEET.txt");
+
     
     G = new graspi::graph_t( d_g.n_total() );
     n = d_g.n_bulk;
@@ -544,11 +547,11 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     bool connectityFlagOfSource = false;
                     if( (C[s]==BLACK) || (C[s]==ORANGE) ){
                         connectityFlagOfSource = CCsEHT[vCCsEHT[s]].if_connected_to_electrode;
-                        if(connectityFlagOfSource) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
+//                        if(connectityFlagOfSource) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
                     }
                     if ( (C[s]==WHITE) || (C[s]==YELLOW) ){
                         connectityFlagOfSource = CCsEET[vCCsEET[s]].if_connected_to_electrode;
-                        if (connectityFlagOfSource ) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+  //                      if (connectityFlagOfSource ) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
                     }
                     if ( (C[s]==GREY) && (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) && (CCsEET[vCCsEET[s]].if_connected_to_electrode) ){
                         connectityFlagOfSource = true;
@@ -557,8 +560,14 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     }
 
                     if (C[s]==GREY){
-                        if (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
-                        if (CCsEET[vCCsEET[s]].if_connected_to_electrode) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+//                        if (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) fileIdOfEHT << i << " " << j << " " << C[s] <<std::endl;
+//                        if (CCsEET[vCCsEET[s]].if_connected_to_electrode) fileIdOfEET << i << " " << j << " " << C[s] <<std::endl;
+                        
+                        // added to check if in the common EEHT and EET
+                        if ( (CCsEHT[vCCsEHT[s]].if_connected_to_electrode) && (CCsEET[vCCsEET[s]].if_connected_to_electrode) ){
+                              CCsEHT[vCCsEHT[s]].if_connected_to_electrode = 3;
+                              CCsEET[vCCsEET[s]].if_connected_to_electrode = 3;
+                        }
                     }
 
                     
@@ -577,13 +586,14 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     }
                     
                     if((C[s]+C[t] == 1) && (connectityFlagOfSource) && (connectityFlagOfTarget)){
-                        
+
                         if (C[s] == WHITE) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[s]].if_connected_to_electrode = 3;
                         }
                         if (C[s] == BLACK) {
                             pairForDescET = std::make_pair(s, C[s]);
@@ -591,6 +601,7 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                             //add edge between white and green (only if path exists)
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[s]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == WHITE) {
                             pairForDescET = std::make_pair(t, C[t]);
@@ -598,6 +609,8 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[t]].if_connected_to_electrode = 3;
+
                         }
                         if (C[t] == BLACK) {
                             pairForDescET = std::make_pair(t, C[t]);
@@ -605,6 +618,7 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                             //add edge between black and green (only if path exists)
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[t]].if_connected_to_electrode = 3;
                         }
                         
 #ifdef DEBUG
@@ -615,33 +629,40 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     }//I D/A
                     
                     if( (C[s]!=C[t] )&& (C[s]+C[t] == 6)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// White and Orange
-                        
+                        //
+                        //
+
+                        //
+                        //
+
                        
                         if (C[s] == WHITE) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[s]].if_connected_to_electrode = 3;
                         }
                         if (C[s] == ORANGE) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                                w, o, G, W, L);
+                            CCsEHT[vCCsEHT[s]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == WHITE) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
-
+                            CCsEET[vCCsEET[t]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == ORANGE) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
-
+                            CCsEHT[vCCsEHT[t]].if_connected_to_electrode = 3;
                         }
 #ifdef DEBUG
                     std::cerr << "added2( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
@@ -657,31 +678,34 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     
                     if((C[s]!=C[t] )&&(C[s]+C[t] == 7)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Yellow and Black
                         
-                        
+
                         if (C[s] == YELLOW) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
-
+                            CCsEET[vCCsEET[s]].if_connected_to_electrode = 3;
                         }
                         if (C[s] == BLACK) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[s]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == YELLOW) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[t]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == BLACK) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[t]].if_connected_to_electrode = 3;
                         }
 #ifdef DEBUG
                     std::cerr << "added4( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
@@ -689,30 +713,34 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
                     }//I
                     if((C[s]!=C[t] )&&(C[s]+C[t] == 12)&& (connectityFlagOfSource) && (connectityFlagOfTarget)){// Yellow and Orange
                         
-                        
+
                         if (C[s] == YELLOW) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[s]].if_connected_to_electrode = 3;
                         }
                         if (C[s] == ORANGE) {
                             pairForDescET = std::make_pair(s, C[s]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( s, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[s]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == YELLOW) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEEHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEET[vCCsEET[t]].if_connected_to_electrode = 3;
                         }
                         if (C[t] == ORANGE) {
                             pairForDescET = std::make_pair(t, C[t]);
                             setOfIndicesEHHTatInterface.insert(pairForDescET);
                             make_update_edge_with_meta_vertex( t, green_vertex,
                                                               w, o, G, W, L);
+                            CCsEHT[vCCsEHT[t]].if_connected_to_electrode = 3;
                         }
 #ifdef DEBUG
                     std::cerr << "added5( " << s << "," << t << " )" << C[s] << " " << C[t] << std::endl;
@@ -794,8 +822,36 @@ bool graspi::build_graph_for_effective_paths(graph_t*& G, const dim_g_t& d_g,
     fileIdOfEETacceptor.close();
     fileIdOfEHTdonor.close();
     
+    
+    // iterate again over all the vertices to outout the data to four files.
+    for(unsigned int k = 0; k < d_a.nz; k++){
+        for(unsigned int j = 0; j < d_a.ny; j++){
+            for(unsigned int i = 0; i < d_a.nx; i++){
+                int id = i + d_a.nx * ( j + d_a.ny * k );
+                int s = id;
+                
+                int connectivityEET = CCsEET[vCCsEET[s]].if_connected_to_electrode;
+                int connectivityEHT = CCsEHT[vCCsEHT[s]].if_connected_to_electrode;
+                
+                if ( (C[s] == GREY) || (C[s] == BLACK) || (C[s] == ORANGE)){
+                    if (connectivityEHT == 3) fileIdOfCEHT << i << " " << j << " " << C[s] << std::endl;
+                    if (connectivityEHT ) fileIdOfEHT << i << " " << j << " " << C[s] << std::endl;
+                }
+
+                if ( (C[s] == GREY) || (C[s] == WHITE) || (C[s] == YELLOW)){
+                    if (connectivityEET == 3) fileIdOfCEET << i << " " << j << " " << C[s] << std::endl;
+                    if (connectivityEET ) fileIdOfEET << i << " " << j << " " << C[s] << std::endl;
+                }
+                
+            }//for i
+        }//for j
+    }//for k
+    
+    
     fileIdOfEET.close();
     fileIdOfEHT.close();
+    fileIdOfCEET.close();
+    fileIdOfCEHT.close();
 
     delete[] ngbr;
     

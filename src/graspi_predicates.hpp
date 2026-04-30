@@ -259,13 +259,23 @@ private:
 class connect_multiple_same_color_and_GREEN {
 public:
     connect_multiple_same_color_and_GREEN ()
-    : G_(0), vertex_colors_(0) { }
+    : G_(0), vertex_colors_(0), edge_weights_(0) { }
     connect_multiple_same_color_and_GREEN (const graph_t& G,
                                                           const std::vector<COLOR>& targetC,
-                                                          const vertex_colors_t& C)
-    : G_(&G), colorsForEffectiveTransport(targetC), vertex_colors_(&C) { }
+                                                          const vertex_colors_t& C,
+                                                          const edge_weights_t& W)
+    : G_(&G), colorsForEffectiveTransport(targetC), vertex_colors_(&C),  edge_weights_(&W){ }
     
     bool operator()(const edge_descriptor_t& e) const {
+        
+//        if (fabs((*edge_weights_)[e] - 0.5*std::sqrt(2))< 1e-2) return false;
+//
+//        if (
+//            ( (*vertex_colors_)[boost::source(e, *G_)] == (*vertex_colors_)[boost::target(e, *G_)] )
+//            &&
+//            ( (*vertex_colors_)[boost::source(e, *G_)] == GREY)
+//            )
+//            return false;
         
         bool flagSource=false;
         bool flagTarget=false;
@@ -275,6 +285,10 @@ public:
             if ( (*vertex_colors_)[boost::target(e, *G_)] == colorsForEffectiveTransport[iC])
                 flagTarget=true;
         }
+        
+        if ( (*vertex_colors_)[boost::target(e, *G_)] == GREY)
+            flagTarget=false;
+    
         if( (flagSource == true) && (flagTarget == true) ) return true;
         
         if( (*vertex_colors_)[boost::source(e, *G_)] == GREEN){
@@ -298,6 +312,7 @@ private:
     const graph_t* G_;
     std::vector<COLOR> colorsForEffectiveTransport;
     const vertex_colors_t* vertex_colors_;
+    const edge_weights_t* edge_weights_;
 }; // class connect_multiple_same_color_and_relevant_meta_vertex
 
 
